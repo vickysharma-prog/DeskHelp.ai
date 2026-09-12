@@ -156,6 +156,36 @@ function ScheduleEditor({ schedule, onChange }) {
   );
 }
 
+/** Collapses a run into one row per distinct outcome and reason. */
+function groupOutcomes(outcomes) {
+  const groups = new Map();
+
+  for (const outcome of outcomes) {
+    const key = outcome.judgement?.disposition ?? outcome.status;
+    const detail = outcome.detail ?? '';
+    const id = `${key}::${detail}`;
+
+    const existing = groups.get(id);
+    if (existing) {
+      existing.count += 1;
+      if (existing.examples.length < 3) existing.examples.push(outcome.contactId);
+      continue;
+    }
+
+    const shown = describeDisposition(key);
+    groups.set(id, {
+      key: id,
+      label: shown.label,
+      tone: shown.tone,
+      detail,
+      count: 1,
+      examples: [outcome.contactId],
+    });
+  }
+
+  return [...groups.values()].sort((a, b) => b.count - a.count);
+}
+
 function PreviewPanel({ title, result, onClose }) {
   const first = result.outcomes.find((outcome) => outcome.taskText);
 
@@ -175,36 +205,40 @@ function PreviewPanel({ title, result, onClose }) {
         </div>
 
       <div className="modal-body stack">
+        {/*
+          Grouped rather than listed. A run over a few hundred families
+          produces a few hundred rows that mostly say the same thing, and an
+          operator wants to know how many of each, not to scroll past them.
+        */}
         <div className="scroll-x">
           <table>
             <thead>
               <tr>
-                <th>Contact</th>
-                <th>Number</th>
                 <th>Outcome</th>
+                <th>How many</th>
                 <th>Why</th>
               </tr>
             </thead>
             <tbody>
-              {result.outcomes.map((outcome) => {
-                const key = outcome.judgement?.disposition ?? outcome.status;
-                const shown = describeDisposition(key);
-                return (
-                  <tr key={outcome.contactId}>
-                    <td>{outcome.contactId}</td>
-                    <td className="mono">{outcome.maskedPhone || '—'}</td>
-                    <td>
-                      <span className={`pill ${shown.tone}`}>{shown.label}</span>
-                    </td>
-                    <td className="muted">
-                      {outcome.detail}
-                      {outcome.judgement?.reasons?.map((reason) => (
-                        <div key={reason}>{reason}</div>
-                      ))}
-                    </td>
-                  </tr>
-                );
-              })}
+              {groupOutcomes(result.outcomes).map((group) => (
+                <tr key={group.key}>
+                  <td>
+                    <span className={`pill ${group.tone}`}>{group.label}</span>
+                  </td>
+                  <td className="num">
+                    <strong>{group.count}</strong>
+                  </td>
+                  <td className="muted">
+                    {group.detail}
+                    <div style={{ marginTop: 4, fontSize: 12 }}>
+                      {group.examples.join(', ')}
+                      {group.count > group.examples.length
+                        ? ` and ${group.count - group.examples.length} more`
+                        : ''}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

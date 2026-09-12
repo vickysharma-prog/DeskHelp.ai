@@ -132,14 +132,18 @@ export async function runAction(options: RunOptions): Promise<RunResult> {
     });
 
     if (!decision.allowed) {
+      // A preview still renders the words. Reading what would be said is the
+      // point of looking, and it does not stop being the point because the
+      // hour is wrong or somebody on the list has no consent.
+      const rendered = renderCall({ action, contact, institute, factSheet });
       outcomes.push({
         contactId: contact.id,
-        maskedPhone: renderCall({ action, contact, institute, factSheet })
-          .maskedDestination,
+        maskedPhone: rendered.maskedDestination,
         status: 'refused',
         refusalReason: decision.reason,
         detail: decision.detail,
         warnings: [],
+        ...(options.preview ? { taskText: rendered.taskText } : {}),
       });
       continue;
     }
