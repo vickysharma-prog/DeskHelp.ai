@@ -1,9 +1,9 @@
 {
   "name": "deskhelp",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "Scheduled phone-work desk for schools, colleges and coaching institutes. One engine, many bounded call workflows, every answer traced to what was actually said.",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "engines": {
     "node": ">=22.5.0"
@@ -23,5 +23,9 @@
   "devDependencies": {
     "@types/node": "^22.20.2",
     "typescript": "^7.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vickysharma-prog/deskhelp.git"
   }
 }

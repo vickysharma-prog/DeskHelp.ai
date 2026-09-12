@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT">
+  <img src="https://img.shields.io/badge/license-AGPL--3.0-111111?style=flat-square" alt="AGPL-3.0">
   <img src="https://img.shields.io/badge/node-%E2%89%A522.5-111111?style=flat-square" alt="Node 22.5 or later">
   <img src="https://img.shields.io/badge/tests-163%20passing-111111?style=flat-square" alt="163 tests">
   <img src="https://img.shields.io/badge/runtime%20deps-0-111111?style=flat-square" alt="No runtime dependencies">
@@ -307,4 +307,10 @@ after it.
 
 ## Licence
 
-[MIT](LICENSE).
+[AGPL-3.0](LICENSE).
+
+Run it, change it, host it. If you host a modified version where other people
+can use it, publish your changes. That is the whole of the obligation, and it
+is there so a hosted fork cannot be a private one.
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
