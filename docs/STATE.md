@@ -3,105 +3,90 @@
 **Read this first when resuming.** It says where the work stands and what the
 next action is. Update it at the end of every working session.
 
-Last updated: **2026-09-12**
-Phase: **engine, platform and website built; skill, PR and video outstanding**
+Last updated: **2026-09-12, late evening**
+Phase: **built, deployed and pushed. The live call and the video remain.**
 
 ---
 
-## ⏰ Time
+## Where things live
 
-**Deadline: 14 Sep 2026, 11:45pm SGT = 9:15pm IST.**
-
-Nothing is built yet. The build has not started because planning was
-deliberately front-loaded; several directions were killed with evidence rather
-than discovered halfway through implementation (see `DECISIONS.md`).
-
-The remaining time is short relative to the scope agreed. If it becomes clear
-the full scope will not land, the correct move is **fewer workflows, fully
-finished**, not many workflows half-done. The CALL-E review policy is explicit:
-*"Accept a smaller complete contribution after removing unfinished features."*
+| | |
+| --- | --- |
+| Code | `C:\Users\admin\deskline` (the folder is still named `deskline`; the product is DeskHelp.ai) |
+| GitHub | <https://github.com/vickysharma-prog/DeskHelp.ai> |
+| Live site | <https://deskhelp.onrender.com> |
+| Demo login | `demo@deskhelp.ai` / `demo-northline-2026`, and a button on the sign-in page |
+| CALL-E repo clone | `C:\Users\admin\calle-hack` (fork: `vickysharma-prog`) |
 
 ---
 
-## Where things stand
+## Done
 
-### Done
+- Engine, 14 workflows, scheduler, contact import, review queue, call-to-call
+  memory. 163 tests and a typecheck, all green.
+- Accounts, sessions, the web interface, a landing page, and a seeded demo of
+  124 families with 14 questions waiting in the queue.
+- Repository public under MIT, with a README carrying four screenshots taken by
+  `scripts/screenshots.mjs`, and a CONTRIBUTING built around the three rules.
+- Deployed on Render from `render.yaml`. Every push to `main` redeploys, so the
+  live link is always current.
+- The link carries an Open Graph card, a favicon, robots and a sitemap.
+- `.env` holds the CALL-E key, the live flag and the test number. The live gate
+  is open locally and verified: `npm run live` prints "Gate: OPEN".
 
-- Hackathon researched end to end: rules, deadline, judging criteria, review
-  policy, merge gate, contribution structure
-- All 380 submissions analysed for saturation and for the pattern shared by the
-  strongest entries
-- Idea settled: **DeskHelp**, a scheduled phone-work desk for education
-  institutes
-- Architecture settled: one engine + declarative action configs
-- Safety model settled and written into `CLAUDE.md`
-- Name settled: **DeskHelp**
-- CALL-E account live, API key verified working (read-only probe: authenticated
-  `404` vs unauthenticated `401`)
-- Fork of the submissions repo cloned to `C:\Users\admin\calle-hack`;
-  `validate_repository.py` passes on a clean tree
-- `node:sqlite` verified working — no native build needed
-- Authorized test number obtained (stored in `.env` only)
+## Not done
 
-### Draft files present, nothing runs yet
+1. **One real call.** Nothing has been dialled yet. All twenty free calls are
+   unspent.
+2. **The demo video.** About three minutes, on YouTube, publicly visible.
+3. **The video on the landing page.** One line: `DEMO_VIDEO_ID` in
+   `ui/src/pages/Landing.jsx`. The section already exists and shows a branded
+   placeholder until an id is set.
+4. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
+   each in `apps/README.md` and the CALL-E repo's root `README.md`. No code
+   goes in it: it is a catalogue pointer to this repository, following the
+   pattern of the merged entries `speakeasy` and `supplycall-ai`.
+5. **The Devpost form**, and the feedback survey, which is a separate prize.
 
+---
+
+## Tomorrow, in order
+
+Only after **9am IST**. The Indian calling window is 09:00 to 21:00 and the
+guard refuses outside it. This was hit on the evening of the 12th at 21:52,
+which is the safety working rather than a bug.
+
+```bash
+npm start                                          # one terminal
+npm run live -- --action fee-reminder --confirm    # another
 ```
-C:\Users\admin\deskhelp\
-├── CLAUDE.md
-├── package.json
-├── .gitignore
-├── .env.example
-├── docs/
-│   ├── STATE.md        <- this file
-│   ├── DECISIONS.md
-│   └── PROGRESS.md
-└── src/core/types.ts   <- domain model only
-```
 
-`src/core/types.ts` is the real starting point: it encodes the two core rules
-(the agent asks and captures; a claim is not a fact) as types rather than as
-prose, so a workflow author cannot quietly bypass them.
+It asks for the last four digits of the number before it dials.
 
----
+The recording, in one take:
 
-## Next action
-
-**Build the engine** (`src/core`), in this order. Each step is testable on
-fixtures with no network and no credentials.
-
-1. `factsheet.ts` — versioned load, topic lookup scoped to an action
-2. `render.ts` — task text per register (`en` / `hi` / `hi-en` / `ta`),
-   disclosure first, bounded questions, explicit refusal instruction
-3. `guard.ts` — consent, do-not-call, declared calling window, destination
-   allow list, contact-frequency limit. Every refusal returns a `RefusalReason`
-4. `idempotency.ts` — ledger keyed on `(action, contact, period)`
-5. `disposition.ts` — fail-closed classification; evidence required where the
-   question demands it
-6. `calle.ts` — client with dry-run as the default path and live behind two
-   independent gates
-7. Fixtures + tests covering the refusal paths, not only the happy path
-
-Then: action configs → scheduler → data import → UI → skill → PR → video.
-
----
-
-## Open questions
-
-| # | Question | Blocks |
-| --- | --- | --- |
-| 1 | Which workflow becomes the demo video story? | Deliberately deferred until after the build, so the best-turned-out workflow can be chosen |
-| 2 | UI stack — React + Vite, or server-rendered HTML? | The UI step. Server-rendered is lighter for judges to run; React is nicer to demo |
-| 3 | GitHub repo name under `vickysharma-prog` | Publishing. Default to `deskhelp` |
-| 4 | Does a Hindi transcript come back Devanagari or romanised? | Parser behaviour. **Unknown until the first live Hindi call** — budget 1–2 calls to find out. Handle both regardless |
+1. The dashboard: 124 contacts, 14 questions waiting
+2. A dry run on a workflow, showing the exact words
+3. The `--confirm` command, and the phone ringing
+4. Speak Hindi and English mixed, the way a parent actually would
+5. **Ask something the fact sheet does not cover**, for instance whether a
+   scholarship is available. This is the moment that separates DeskHelp from a
+   voice bot: the caller refuses to answer and writes the question down.
+6. The structured result in the terminal: the answers, the claim, the captured
+   question
+7. Refresh the browser: the same call on the dashboard and in the queue
+8. Answer the question in the queue
 
 ---
 
 ## Standing reminders
 
-- **20 CALL-E calls total.** Development, testing and the video all come out of
-  this. Reserve 3–4 for the video.
-- **Real phone number never leaves `.env`.** Fixtures use masked or
-  standards-reserved fictional numbers.
-- A feedback-survey prize exists ($200 × 5 winners) and is nearly free to
-  claim. Do it regardless of how the build goes.
-- Cite `roll-call` (PR #325) as prior art in the attendance workflow.
+- **20 CALL-E calls, none spent.** Keep three or four for the video; the first
+  take is never the one that ships.
+- **The real number never leaves `.env`.** Fixtures use the NXX-555-01XX range
+  that exists so nobody's actual phone rings in a demo.
+- Render's free tier sleeps after fifteen minutes. Open the link yourself a
+  minute before handing it to anybody.
+- The public deployment cannot dial: `DESKHELP_LIVE` is false there and the
+  allow list is empty.
+- Cite `roll-call` (PR #325) as prior art in the submission.

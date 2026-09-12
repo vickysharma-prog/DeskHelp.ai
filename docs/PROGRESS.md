@@ -296,9 +296,60 @@ terminal-prompt button icon, which is its signature and was dropped once
 copied. The palette, the copy, the reception drawing and the light dashboard
 preview inside the page are DeskHelp's own.
 
+### Published, deployed, and a bug the screenshots found
+
+- Repository public at <https://github.com/vickysharma-prog/DeskHelp.ai>, MIT,
+  with a README modelled on two repositories the user pointed at. No invented
+  badges: the reference repos carry star and trend counts because theirs are
+  real, so DeskHelp's are limited to what is true. The strongest line in it is
+  the quick start, because `npm run demo` needs no account, no credentials and
+  no network, which is unusual for anything with an API behind it.
+- CONTRIBUTING leads with the three rules, and gives one test that settles
+  whether a workflow belongs: could a temp on their first morning do this from
+  a script, passing anything unusual to a colleague?
+- Screenshots are driven by Playwright rather than taken by hand, so every one
+  has the same window and scale.
+- Deployed on Render from `render.yaml`. The public instance has
+  `DESKHELP_LIVE=false` and an empty allow list, so both gates are shut and it
+  cannot dial. The free tier's ephemeral disk turns out to be a feature: a cold
+  start reseeds the demo, so a workspace somebody has poked at repairs itself.
+- Added the link card, a favicon, robots and a sitemap. A pasted link was a
+  bare URL before.
+
+**A fourth bug, found by looking at a screenshot.** The first attempt at the
+dry-run shot was 124 identical rows and no task text. The reason was the hour:
+at 21:52 every contact was refused for being outside the calling window, and
+the modal only rendered the words when at least one call could be placed.
+
+That was wrong. Reading what would be said is the reason to open a dry run, and
+it does not stop being the reason because the hour is wrong. A preview now
+renders the task text alongside the refusals, and the outcomes are grouped, so
+the screen reads "114 refused, calling window" with three examples rather than
+a list nobody will scroll.
+
+### Licence, twice
+
+Recommended AGPL, on the grounds that MIT is a one-way door and the product is
+meant to be sold as a hosted service. Switched to AGPL, then back to MIT when
+the user decided adoption matters more on day one. Their repository, their
+call; the reasoning is in `DECISIONS.md`.
+
+### Two housekeeping mistakes worth recording
+
+The `.env` rewrite that added the live-call variables dropped `CALLE_API_KEY`,
+because the file was rebuilt rather than edited. The key had to be reissued.
+When it was, it turned up saved as a loose text file inside `calle-hack`, which
+is a git repository where nothing was ignoring it. Moved into `.env` and the
+copy deleted.
+
+Commits were also rewritten twice: once to strip the assistant's co-author
+trailers, and once to use the GitHub noreply address, because the original
+email was not linked to the account and every commit showed as unattributed.
+
 ### Next
 
-The agent skill, the submission PR and the demo video.
+One real call, the video, the submission pull request and the Devpost form.
+See `STATE.md`.
 
 ---
 

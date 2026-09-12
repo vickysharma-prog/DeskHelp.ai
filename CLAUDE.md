@@ -36,6 +36,8 @@ DeskHelp is being built for the **CALL-E: Your Code Is Calling** hackathon
 (AI Rudder), but it is a standalone product that outlives the hackathon and is
 intended to be sold.
 
+- Live site: <https://deskhelp.onrender.com>
+- Repository: <https://github.com/vickysharma-prog/DeskHelp.ai>
 - Hackathon: <https://call-e.devpost.com/>
 - Submission: a pull request to <https://github.com/CALLE-AI/awesome-phone-call-agents>
 - Local clone of that repo: `C:\Users\admin\calle-hack` (fork: `vickysharma-prog`)
