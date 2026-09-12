@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "description": "Scheduled phone-work desk for schools, colleges and coaching institutes. One engine, many bounded call workflows, every answer traced to what was actually said.",
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=22.5.0"
@@ -26,6 +26,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vickysharma-prog/deskhelp.git"
+    "url": "git+https://github.com/vickysharma-prog/DeskHelp.ai.git"
   }
 }

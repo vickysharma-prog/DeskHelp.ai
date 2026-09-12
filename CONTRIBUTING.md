@@ -154,9 +154,5 @@ phone rings in a demo.
 
 ## Licence
 
-DeskHelp is [AGPL-3.0](LICENSE). By contributing you agree your work is
-released under it.
-
-The short version of what that means: you can run it, change it and host it. If
-you host a modified version where other people can use it, you publish your
-changes. It is the licence that keeps a hosted fork from being a private one.
+DeskHelp is [MIT](LICENSE). By contributing you agree your work is released
+under it.
