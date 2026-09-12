@@ -32,7 +32,7 @@ office that runs on the phone. Calls happen through
 may be said and what the answer meant is DeskHelp's.
 
 <p align="center">
-  <img src="assets/screens/dashboard.png" width="860" alt="The dashboard: the institute greeted by name, what needs doing, and the state of every workflow">
+  <img src="assets/screens/tour.gif" width="820" alt="A tour: the dashboard, the fourteen workflows, a dry run showing the exact words, and the review queue">
 </p>
 
 <table>
