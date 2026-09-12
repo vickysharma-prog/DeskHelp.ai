@@ -1,0 +1,675 @@
+/*
+  The landing page.
+
+  Light, like the product behind it. A marketing page that does not look like
+  the thing it is selling makes the first screen after sign-in feel like a
+  different company.
+
+  Nothing here claims a customer, a logo, a testimonial or a number that does
+  not exist. A product on its first day has to be honest about being on its
+  first day.
+*/
+
+.landing {
+  --lp-max: 1140px;
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  overflow-x: hidden;
+}
+
+/* A faint dotted grid, fading out down the page, plus the brand glows. */
+.landing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(75, 70, 229, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(120% 70% at 50% 0%, #000 18%, transparent 72%);
+}
+.landing::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(820px 420px at 50% -14%, rgba(75, 70, 229, 0.14), transparent 64%),
+    radial-gradient(620px 400px at 96% 16%, rgba(14, 165, 165, 0.12), transparent 62%);
+}
+.landing > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- the floating nav ----------------------------------------------------- */
+
+.lp-nav {
+  position: sticky;
+  top: 14px;
+  z-index: 40;
+  padding: 0 20px;
+  margin-top: 14px;
+}
+.lp-nav-inner {
+  position: relative;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 12px 14px 12px 22px;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 6px 24px rgba(22, 22, 45, 0.08);
+}
+.lp-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  margin-right: auto;
+}
+.lp-brand .logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+}
+.lp-brand .logo svg {
+  width: 21px;
+  height: 21px;
+}
+.lp-brand .wordmark {
+  font-size: 19px;
+}
+/* Centred on the bar rather than pushed against the button, so the space
+   between the brand and the links is not a hole. */
+.lp-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 28px;
+}
+.lp-links a {
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 520;
+}
+.lp-links a:hover {
+  color: var(--text);
+}
+
+/* --- buttons -------------------------------------------------------------- */
+
+.lp-btn {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 580;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, filter 0.15s;
+}
+.lp-btn:hover {
+  background: var(--surface-2);
+}
+.lp-btn.solid {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, #4b46e5, #9333ea);
+  box-shadow: 0 5px 18px rgba(75, 70, 229, 0.32);
+}
+.lp-btn.solid:hover {
+  filter: brightness(1.08);
+}
+.lp-btn.lg {
+  padding: 13px 26px;
+  font-size: 14.5px;
+}
+
+/* --- hero ----------------------------------------------------------------- */
+
+.lp-hero {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 78px 24px 48px;
+  text-align: center;
+}
+.lp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 15px 6px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-sm);
+  font-size: 12.5px;
+  font-weight: 540;
+  color: var(--text-2);
+}
+.lp-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(75, 70, 229, 0.16);
+}
+.lp-hero h1 {
+  /*
+    Sized so the line breaks where the meaning does, rather than leaving one
+    word alone on a second line.
+  */
+  font-size: 54px;
+  line-height: 1.07;
+  letter-spacing: -0.042em;
+  margin: 24px auto 20px;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.lp-grad {
+  background: linear-gradient(110deg, #4b46e5 0%, #9333ea 52%, #0ea5a5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lp-hero > p {
+  font-size: 16.5px;
+  line-height: 1.62;
+  color: var(--text-2);
+  margin: 0 auto 28px;
+  max-width: 52ch;
+}
+.lp-cta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
+}
+.lp-fine {
+  margin: 0 auto;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+
+/* --- the product preview -------------------------------------------------- */
+
+.lp-shot {
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 8px 24px 76px;
+}
+.mock {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 30px 80px rgba(22, 22, 45, 0.15);
+}
+.mock-bar {
+  display: flex;
+  gap: 6px;
+  padding: 11px 14px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.mock-bar span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.mock-body {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  min-height: 330px;
+}
+.mock-side {
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  padding: 15px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mock-brand {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  margin-bottom: 11px;
+}
+.mock-nav {
+  font-size: 11.5px;
+  color: var(--text-2);
+  padding: 6px 9px;
+  border-radius: 7px;
+}
+.mock-nav.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.mock-main {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mock-banner {
+  border-radius: 11px;
+  padding: 15px 17px;
+  background: linear-gradient(140deg, #3f3ad9, #9333ea);
+  color: #fff;
+}
+.mock-banner b {
+  display: block;
+  font-weight: 640;
+  font-size: 17px;
+  letter-spacing: -0.025em;
+}
+.mock-banner i {
+  display: block;
+  font-style: normal;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 3px;
+}
+.mock-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+.mock-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+}
+.mock-tile b {
+  display: block;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.mock-tile i {
+  display: block;
+  font-style: normal;
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.mock-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.mock-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+.mock-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  flex: none;
+}
+.mock-who {
+  flex: 1;
+  min-width: 0;
+}
+.mock-who b {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.mock-who i {
+  display: block;
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+.mock-pill {
+  font-size: 10px;
+  font-weight: 620;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--mute-soft);
+  color: var(--mute);
+  white-space: nowrap;
+}
+.mock-pill.ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.mock-pill.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+/* --- the workflow strip --------------------------------------------------- */
+
+.lp-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 44px 0 48px;
+  overflow: hidden;
+}
+.lp-strip-head {
+  max-width: var(--lp-max);
+  margin: 0 auto 26px;
+  padding: 0 24px;
+  text-align: center;
+}
+.lp-strip-head h2 {
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.lp-strip-head p {
+  color: var(--text-2);
+  margin: 7px 0 0;
+}
+.lp-marquee {
+  position: relative;
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.lp-marquee-track {
+  display: flex;
+  gap: 11px;
+  width: max-content;
+  animation: marquee 46s linear infinite;
+}
+.lp-chip {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  font-size: 13.5px;
+  font-weight: 520;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* --- sections ------------------------------------------------------------- */
+
+.lp-section {
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 76px 24px;
+}
+.lp-head {
+  text-align: center;
+  margin: 0 auto 36px;
+}
+/*
+  The width limit belongs on the paragraph, not the heading. Putting it on the
+  block wrapped a heading after three or four words while half the row sat
+  empty beside it.
+*/
+.lp-head h2 {
+  font-size: 33px;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+.lp-head p {
+  color: var(--text-2);
+  margin: 9px auto 0;
+  max-width: 62ch;
+  font-size: 15.5px;
+}
+
+.lp-bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.lp-bento-cell {
+  padding: 26px 28px 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.lp-bento-cell:nth-child(2n) {
+  border-right: none;
+}
+.lp-bento-cell:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+.lp-bento-cell h3 {
+  font-size: 17px;
+  letter-spacing: -0.022em;
+  margin-bottom: 8px;
+}
+.lp-bento-cell p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+/* --- use cases ------------------------------------------------------------ */
+
+.lp-uses {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.lp-use {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px 26px 26px;
+  box-shadow: var(--shadow-sm);
+}
+.lp-use-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.lp-use-head h3 {
+  font-size: 17px;
+  letter-spacing: -0.022em;
+}
+.lp-use ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lp-use li {
+  position: relative;
+  padding-left: 25px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.lp-use li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.lp-use-note {
+  margin: 18px 0 0;
+  padding-top: 15px;
+  border-top: 1px dashed var(--border);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-3);
+}
+
+/* --- numbered steps ------------------------------------------------------- */
+
+.lp-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.lp-steps-list {
+  border-right: 1px solid var(--border);
+}
+.lp-step {
+  padding: 23px 26px;
+  border-bottom: 1px solid var(--border);
+  border-left: 2px solid transparent;
+}
+.lp-step:last-child {
+  border-bottom: none;
+  border-left-color: var(--accent);
+}
+.lp-step h3 {
+  font-size: 15.5px;
+  margin-bottom: 7px;
+}
+.lp-step p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.62;
+}
+/* The drawing is white line art, so its panel stays dark on this light page.
+   It doubles as the one block of brand colour in the middle of the page. */
+.lp-steps-art {
+  display: grid;
+  place-items: center;
+  padding: 26px;
+  background: linear-gradient(152deg, #3f3ad9 0%, #6b40e4 48%, #9333ea 100%);
+}
+.lp-steps-art .scene {
+  margin: 0;
+  width: 100%;
+}
+
+/* --- faq ------------------------------------------------------------------ */
+
+.lp-faq {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.lp-faq details {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.lp-faq summary {
+  cursor: pointer;
+  font-weight: 570;
+  font-size: 14.5px;
+  list-style: none;
+}
+.lp-faq summary::-webkit-details-marker {
+  display: none;
+}
+.lp-faq summary::after {
+  content: '+';
+  float: right;
+  color: var(--text-3);
+  font-weight: 400;
+}
+.lp-faq details[open] summary::after {
+  content: '\2212';
+}
+.lp-faq p {
+  margin: 11px 0 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.66;
+}
+
+/* --- closing -------------------------------------------------------------- */
+
+.lp-final {
+  text-align: center;
+  padding: 84px 24px 92px;
+}
+.lp-final h2 {
+  font-size: 36px;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.lp-final p {
+  color: var(--text-2);
+  margin: 11px 0 24px;
+  font-size: 15.5px;
+}
+.lp-foot {
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+@media (max-width: 900px) {
+  .lp-hero {
+    padding-top: 54px;
+  }
+  .lp-hero h1 {
+    font-size: 33px;
+  }
+  .lp-links {
+    display: none;
+  }
+  .lp-bento,
+  .lp-steps,
+  .lp-uses {
+    grid-template-columns: 1fr;
+  }
+  .lp-bento-cell {
+    border-right: none;
+  }
+  .lp-steps-list {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .mock-body {
+    grid-template-columns: 120px 1fr;
+  }
+}

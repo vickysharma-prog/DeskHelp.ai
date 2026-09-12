@@ -1,0 +1,1232 @@
+/*
+  DeskHelp's design system.
+
+  Light only, deliberately. This is software somebody uses at a front desk in a
+  bright room, next to a paper register, and a dark interface there reads as a
+  developer tool rather than as office equipment.
+
+  Two rules the rest follows from:
+
+  Status has one colour vocabulary everywhere. A disposition is the same green,
+  amber or red on the dashboard, the workflow card and the call record, so an
+  operator learns it once.
+
+  Nothing important is colour alone. Every state carries a word beside its dot,
+  because a front office at 9am is not studying a legend.
+*/
+
+:root {
+  --bg: #f6f7fc;
+  --bg-tint: radial-gradient(1200px 520px at 8% -10%, #e6ebff 0%, transparent 60%),
+    radial-gradient(900px 460px at 96% 4%, #ffeede 0%, transparent 56%),
+    radial-gradient(760px 400px at 62% 108%, #e4fbf4 0%, transparent 60%);
+  --surface: #ffffff;
+  --surface-2: #f5f5f9;
+  --border: #e7e7ee;
+  --border-strong: #d6d6e0;
+
+  --text: #16161d;
+  --text-2: #56566a;
+  --text-3: #8b8ba0;
+
+  --accent: #4b46e5;
+  --accent-2: #9333ea;
+  --accent-3: #0ea5a5;
+  --accent-soft: #ecebff;
+
+  --ok: #0f7047;
+  --ok-soft: #e4f5ec;
+  --warn: #8a5300;
+  --warn-soft: #fdf1da;
+  --stop: #a3202b;
+  --stop-soft: #fdeaea;
+  --mute: #6a6a7d;
+  --mute-soft: #eeeef4;
+
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(22, 22, 45, 0.05);
+  --shadow: 0 1px 2px rgba(22, 22, 45, 0.05), 0 8px 26px rgba(22, 22, 45, 0.07);
+  --shadow-lg: 0 24px 70px rgba(22, 22, 45, 0.2);
+  --ring: 0 0 0 4px rgba(75, 70, 229, 0.13);
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*
+  Motion is used to show where a thing came from, never as decoration. Anybody
+  who has asked their system to stop moving things gets a still page.
+*/
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes breathe {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(15, 112, 71, 0.32);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(15, 112, 71, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 112, 71, 0);
+  }
+}
+@keyframes drift {
+  0%, 100% {
+    background-position: 0% 0%, 100% 4%, 62% 108%;
+  }
+  50% {
+    background-position: 6% 4%, 94% 0%, 56% 100%;
+  }
+}
+
+.rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop {
+  animation: pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--bg-tint);
+  background-size: 160% 160%, 160% 160%, 160% 160%;
+  background-attachment: fixed;
+  animation: drift 28s ease-in-out infinite;
+  color: var(--text);
+  font: 14px/1.55 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-weight: 640;
+}
+h1 {
+  font-size: 24px;
+}
+h2 {
+  font-size: 16px;
+}
+h3 {
+  font-size: 14px;
+}
+
+code,
+pre {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 12.5px;
+}
+
+/* --- logo ---------------------------------------------------------------- */
+
+.logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  flex: none;
+  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
+  box-shadow: 0 3px 12px rgba(75, 70, 229, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  display: grid;
+  place-items: center;
+}
+.logo.lg {
+  animation: breathe 5.5s ease-in-out infinite;
+}
+.logo svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+.logo.lg {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+}
+.logo.lg svg {
+  width: 25px;
+  height: 25px;
+}
+
+/* --- shell --------------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 244px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
+}
+.brand-name {
+  font-weight: 660;
+  letter-spacing: -0.025em;
+  font-size: 16px;
+}
+.brand-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: -2px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav button {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 11px;
+  border-radius: 9px;
+  color: var(--text-2);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+.nav button:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.nav button[aria-current='true'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 620;
+}
+
+.nav-count {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface-2);
+  color: var(--text-2);
+  border-radius: 20px;
+  padding: 1px 7px;
+}
+.nav button[aria-current='true'] .nav-count {
+  background: var(--surface);
+}
+.nav-count.alert {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.side-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode {
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.mode strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 12.5px;
+  margin-bottom: 3px;
+}
+.mode .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mute);
+}
+.mode.armed {
+  background: var(--ok-soft);
+  border-color: transparent;
+  color: var(--ok);
+}
+.mode.armed strong {
+  color: var(--ok);
+}
+.mode.armed .dot {
+  background: var(--ok);
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 0 4px;
+}
+.who button {
+  all: unset;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 550;
+}
+.who button:hover {
+  text-decoration: underline;
+}
+
+.main {
+  padding: 30px 34px 70px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.page-head {
+  margin-bottom: 26px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+  animation: rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page-head-text {
+  flex: 1 1 480px;
+  min-width: 0;
+}
+.page-head-text h1 {
+  text-wrap: balance;
+}
+.page-head p {
+  margin: 7px 0 0;
+  color: var(--text-2);
+  /*
+    Wide enough that a sentence does not break after three or four words and
+    leave the right half of the screen empty, narrow enough to stay readable.
+  */
+  max-width: 78ch;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.page-head-aside {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding-bottom: 3px;
+}
+
+/* --- surfaces ------------------------------------------------------------ */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.card-body {
+  padding: 17px 19px;
+}
+.card-head {
+  padding: 15px 19px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+}
+.grid.tiles {
+  grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
+}
+.grid.tiles > * {
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.grid.tiles > *:nth-child(2) { animation-delay: 0.05s; }
+.grid.tiles > *:nth-child(3) { animation-delay: 0.1s; }
+.grid.tiles > *:nth-child(4) { animation-delay: 0.15s; }
+.grid.tiles > *:nth-child(5) { animation-delay: 0.2s; }
+
+.grid.cards > * {
+  animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.grid.cards {
+  grid-template-columns: repeat(auto-fill, minmax(336px, 1fr));
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 17px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(var(--accent), var(--accent-2));
+  opacity: 0.85;
+}
+.tile.ok::before {
+  background: var(--ok);
+}
+.tile.warn::before {
+  background: var(--warn);
+}
+.tile-label {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.tile-value {
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 3px;
+}
+.tile-note {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 3px;
+}
+
+/* --- status vocabulary --------------------------------------------------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 620;
+  padding: 2px 9px 2px 7px;
+  border-radius: 20px;
+  background: var(--mute-soft);
+  color: var(--mute);
+  white-space: nowrap;
+}
+.pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.pill.ok {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.pill.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.pill.stop {
+  background: var(--stop-soft);
+  color: var(--stop);
+}
+.pill.accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* --- controls ------------------------------------------------------------ */
+
+button.btn {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 560;
+  font-size: 13px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  transition: background 0.12s, filter 0.12s;
+}
+button.btn:hover {
+  background: var(--surface-2);
+}
+button.btn.primary {
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(58, 92, 224, 0.26);
+}
+button.btn.primary:hover {
+  filter: brightness(1.07);
+}
+button.btn.wide {
+  display: block;
+  width: 100%;
+}
+button.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.switch {
+  --w: 40px;
+  all: unset;
+  cursor: pointer;
+  width: var(--w);
+  height: 23px;
+  border-radius: 20px;
+  background: var(--border-strong);
+  position: relative;
+  flex: none;
+  transition: background 0.16s;
+}
+.switch[aria-checked='true'] {
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.16s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+}
+.switch[aria-checked='true']::after {
+  transform: translateX(calc(var(--w) - 23px));
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+select,
+textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  padding: 8px 11px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+label.field {
+  display: block;
+  margin-bottom: 13px;
+}
+label.field > span {
+  display: block;
+  font-size: 12px;
+  font-weight: 560;
+  color: var(--text-2);
+  margin-bottom: 5px;
+}
+label.field > small {
+  display: block;
+  color: var(--text-3);
+  font-size: 11.5px;
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+/* --- wordmark ------------------------------------------------------------ */
+
+.wordmark {
+  font-weight: 680;
+  letter-spacing: -0.03em;
+  font-size: 16px;
+  color: var(--text);
+}
+.wordmark.lg {
+  font-size: 25px;
+}
+.wordmark-dot {
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* --- the scene behind sign-in -------------------------------------------- */
+
+.scene {
+  /*
+    Inside the coloured panel, pinned to its foot. Not behind the page: a band
+    across a centred layout runs under the text on one side and vanishes behind
+    the form on the other.
+  */
+  margin-top: auto;
+  width: 100%;
+  opacity: 0.95;
+}
+.scene svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* The bell rocks, like one that has just been struck. */
+/* The handset jumps in its cradle, the way a desk phone does when it rings. */
+@keyframes handset-ring {
+  0%, 58%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  62% {
+    transform: translateY(-4px) rotate(-2.5deg);
+  }
+  66% {
+    transform: translateY(-2px) rotate(2.5deg);
+  }
+  70% {
+    transform: translateY(-4px) rotate(-1.5deg);
+  }
+  74% {
+    transform: translateY(0) rotate(0.8deg);
+  }
+}
+.scene-handset {
+  transform-origin: center;
+  animation: handset-ring 7.8s ease-in-out infinite;
+}
+
+/* Rings spreading out from it. */
+@keyframes ripple-out {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.42;
+  }
+  100% {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+.scene-ripple {
+  transform-origin: 0 14px;
+  animation: ripple-out 7.8s ease-out infinite;
+  animation-delay: 4.6s;
+}
+.scene-ripple.d1 {
+  animation-delay: 5s;
+}
+.scene-ripple.d2 {
+  animation-delay: 5.4s;
+}
+
+/* A call leaving the desk and travelling to the phone. */
+@keyframes call-out {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(470px, -92px) scale(1);
+    opacity: 0;
+  }
+}
+.scene-card {
+  animation: call-out 7.8s cubic-bezier(0.4, 0.1, 0.5, 1) infinite;
+  animation-delay: 5.2s;
+}
+.scene-card.d1 {
+  animation-delay: 5.9s;
+}
+
+/* The dotted route the calls follow. */
+@keyframes dash-run {
+  to {
+    stroke-dashoffset: -140;
+  }
+}
+.scene-path {
+  animation: dash-run 5s linear infinite;
+}
+
+/* The phone at the far end answers a moment after the bell. */
+@keyframes phone-buzz {
+  0%, 58%, 100% {
+    transform: rotate(0deg);
+  }
+  62% {
+    transform: rotate(-2.5deg);
+  }
+  66% {
+    transform: rotate(2.5deg);
+  }
+  70% {
+    transform: rotate(-1.2deg);
+  }
+}
+.scene-phone {
+  transform-origin: 1232px 228px;
+  animation: phone-buzz 7.8s ease-in-out infinite;
+}
+
+/* The clock hand, one slow sweep a minute. */
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.scene-hand {
+  transform-origin: 196px 120px;
+  animation: sweep 60s linear infinite;
+}
+
+/* --- auth ---------------------------------------------------------------- */
+
+.auth-page {
+  display: grid;
+  grid-template-columns: 1.02fr 520px;
+  min-height: 100vh;
+}
+
+.auth-left {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 54px 54px 0;
+  background: linear-gradient(152deg, #3f3ad9 0%, #6b40e4 46%, #9333ea 100%);
+}
+/* Two soft highlights so the panel is not a flat slab of colour. */
+.auth-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(660px 340px at 8% 6%, rgba(255, 255, 255, 0.2), transparent 62%),
+    radial-gradient(560px 320px at 96% 88%, rgba(14, 165, 165, 0.28), transparent 60%);
+  pointer-events: none;
+}
+.auth-left-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 580px;
+}
+
+.auth-right {
+  display: grid;
+  place-items: center;
+  padding: 40px 40px;
+  background: var(--surface);
+}
+
+.on-dark {
+  color: #fff;
+}
+.wordmark-dot.on-dark {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: rgba(255, 255, 255, 0.72);
+}
+.on-dark-sub {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.66);
+  margin-top: -1px;
+}
+
+.pitch-h1 {
+  color: #fff;
+  font-size: 40px;
+  line-height: 1.13;
+  letter-spacing: -0.035em;
+  margin-bottom: 16px;
+}
+.pitch-sub {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 0 26px;
+}
+.pitch-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.pitch-points li {
+  position: relative;
+  padding-left: 28px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.pitch-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1.6px rgba(255, 255, 255, 0.55);
+}
+
+.auth {
+  width: 100%;
+  max-width: 430px;
+}
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 34px 32px;
+}
+.auth-title {
+  font-size: 24px;
+  letter-spacing: -0.03em;
+  margin-bottom: 5px;
+}
+.auth-sub {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+/* A sign-in form is the one place a person types carefully, so the fields are
+   bigger here than anywhere else in the product. */
+.auth-card label.field > span {
+  font-size: 13px;
+}
+.auth-card input {
+  padding: 11px 13px;
+  font-size: 14.5px;
+  border-radius: 10px;
+}
+.auth-card button.btn.primary {
+  padding: 12px 16px;
+  font-size: 14.5px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+.auth-switch {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.auth-switch button {
+  all: unset;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 580;
+}
+.auth-switch button:hover {
+  text-decoration: underline;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--text-3);
+  font-size: 11.5px;
+  margin: 17px 0;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  height: 1px;
+  background: var(--border);
+  flex: 1;
+}
+.demo-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--text-3);
+  text-align: center;
+}
+.auth-foot {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.6;
+}
+
+@media (max-width: 980px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+  .auth-left {
+    padding: 34px 24px 0;
+  }
+  .pitch-h1 {
+    font-size: 29px;
+  }
+  .auth-right {
+    padding: 32px 20px 48px;
+  }
+}
+
+/* --- dashboard banner ---------------------------------------------------- */
+
+.banner {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 22px;
+  border-radius: 18px;
+  background: linear-gradient(152deg, #3f3ad9 0%, #6b40e4 48%, #9333ea 100%);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1fr minmax(300px, 50%);
+  align-items: end;
+  gap: 10px;
+  min-height: 196px;
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(520px 260px at 4% 0%, rgba(255, 255, 255, 0.2), transparent 62%),
+    radial-gradient(420px 240px at 98% 100%, rgba(14, 165, 165, 0.3), transparent 60%);
+  pointer-events: none;
+}
+.banner-text {
+  position: relative;
+  z-index: 1;
+  padding: 22px 8px 26px 26px;
+}
+.banner-chips {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+.pill.on-banner {
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+}
+.banner-name {
+  font-size: 27px;
+  font-weight: 650;
+  letter-spacing: -0.032em;
+  color: #fff;
+}
+.banner-text p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13.5px;
+  max-width: 46ch;
+}
+.banner-scene {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+}
+/* The drawing is wider than it is tall here, so it is cropped from the left
+   and the far end of the call stays visible. */
+.banner-scene .scene {
+  margin: 0;
+  opacity: 0.9;
+}
+
+@media (max-width: 760px) {
+  .banner {
+    grid-template-columns: 1fr;
+  }
+  .banner-text {
+    padding: 20px 20px 4px;
+  }
+}
+
+/* --- workflow card ------------------------------------------------------- */
+
+.wf {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 16px 17px;
+}
+.wf-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.wf-title {
+  font-weight: 620;
+}
+.wf-purpose {
+  color: var(--text-2);
+  font-size: 12.5px;
+  margin-top: 3px;
+}
+.wf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.wf-sched {
+  font-size: 12px;
+  color: var(--text-2);
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+}
+.wf-next {
+  color: var(--text-3);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.card.on {
+  border-color: #c9d4ff;
+}
+
+/* --- modal --------------------------------------------------------------- */
+
+.backdrop {
+  animation: rise 0.2s ease both;
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 22, 45, 0.34);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal {
+  animation: pop 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: min(860px, 100%);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+}
+
+/* --- tables -------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  font-weight: 620;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+td {
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.mono {
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.scroll-x {
+  overflow-x: auto;
+}
+
+/* --- misc ---------------------------------------------------------------- */
+
+.note {
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+}
+.note.warn {
+  background: var(--warn-soft);
+  border-color: transparent;
+  color: var(--warn);
+}
+.note.stop {
+  background: var(--stop-soft);
+  border-color: transparent;
+  color: var(--stop);
+}
+.note.ok {
+  background: var(--ok-soft);
+  border-color: transparent;
+  color: var(--ok);
+}
+
+pre.task {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  color: var(--text-2);
+  max-height: 420px;
+  overflow-y: auto;
+  line-height: 1.65;
+}
+
+.quote {
+  border-left: 3px solid var(--accent);
+  padding-left: 12px;
+  color: var(--text);
+  font-style: italic;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.spread {
+  justify-content: space-between;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.muted {
+  color: var(--text-3);
+}
+.empty {
+  padding: 38px 18px;
+  text-align: center;
+  color: var(--text-3);
+}
+
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .side-foot {
+    margin-top: 4px;
+  }
+  .main {
+    padding: 22px 16px 54px;
+  }
+}

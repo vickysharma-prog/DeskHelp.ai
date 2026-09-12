@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+
+node_modules/
+dist/
+.local/
+*.db
+*.db-journal
+*.sqlite
+
+.DS_Store
+Thumbs.db

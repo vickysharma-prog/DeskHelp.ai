@@ -1,0 +1,27 @@
+{
+  "name": "deskhelp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scheduled phone-work desk for schools, colleges and coaching institutes. One engine, many bounded call workflows, every answer traced to what was actually said.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node src/server/main.ts",
+    "ui:build": "npm --prefix ui install && npm --prefix ui run build",
+    "ui:dev": "npm --prefix ui run dev",
+    "demo": "node src/cli/demo.ts",
+    "preview": "node src/cli/preview.ts",
+    "run-action": "node src/cli/run.ts",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
+    "live": "node src/cli/live.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2"
+  }
+}
