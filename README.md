@@ -31,26 +31,6 @@ office that runs on the phone. Calls happen through
 [CALL-E](https://www.heycall-e.com/); everything about who to call, when, what
 may be said and what the answer meant is DeskHelp's.
 
-<p align="center">
-  <img src="assets/screens/dashboard.png" width="820" alt="The dashboard: a greeting, what needs doing, and the state of every workflow">
-</p>
-
-<table>
-<tr>
-<td width="50%"><img src="assets/screens/workflows.png" alt="Fourteen workflows, each with its own switch and schedule"></td>
-<td width="50%"><img src="assets/screens/queue.png" alt="The review queue: questions a caller could not answer"></td>
-</tr>
-<tr>
-<td align="center"><sub><strong>Switch on what your office makes.</strong> Each workflow shows its schedule and the next three dates before you arm it.</sub></td>
-<td align="center"><sub><strong>Answer once.</strong> A question captured on one call is delivered word for word on the next call to that family.</sub></td>
-</tr>
-</table>
-
-<p align="center">
-  <img src="assets/screens/dry-run.png" width="820" alt="A dry run showing the exact words the caller would use">
-  <br><sub><strong>Read it before anybody hears it.</strong> Every workflow has a dry run that prints the whole instruction, including what the caller is forbidden to do. It records nothing and dials nobody.</sub>
-</p>
-
 ## Try it in thirty seconds
 
 No account, no credentials, no network. This runs the whole loop on scripted
