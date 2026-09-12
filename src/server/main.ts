@@ -72,7 +72,7 @@ async function main(): Promise<void> {
     ...(existsSync(uiDir) ? { uiDir } : {}),
   });
 
-  const port = Number(env.DESKHELP_PORT ?? 4321);
+  const port = Number(env.PORT ?? env.DESKHELP_PORT ?? 4321);
   // Loopback by default. An institute's contact list, transcripts and calling
   // controls are not things to put on an interface by accident.
   const host = env.DESKHELP_HOST ?? '127.0.0.1';

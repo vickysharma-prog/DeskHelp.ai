@@ -1,0 +1,31 @@
+# Render blueprint.
+#
+# Connect the repository on render.com and it reads this, so the build command,
+# the start command and the environment are in version control rather than in
+# somebody's memory of a dashboard.
+#
+# The public deployment can never place a call. DESKHELP_LIVE is false here,
+# and the allow list it would also need is empty in the seeded demo. Both gates
+# are shut, which is what makes it safe to hand the link to strangers.
+
+services:
+  - type: web
+    name: deskhelp
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm run ui:build
+    startCommand: node src/server/main.ts
+    healthCheckPath: /api/auth/me
+    envVars:
+      # node:sqlite needs 22.5 or later, and type stripping wants 23.6.
+      - key: NODE_VERSION
+        value: "24"
+      # Offers the shared demo login on the sign-in page.
+      - key: DESKHELP_DEMO
+        value: "true"
+      # Never true on the public deployment.
+      - key: DESKHELP_LIVE
+        value: "false"
+      - key: DESKHELP_HOST
+        value: 0.0.0.0

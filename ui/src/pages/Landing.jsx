@@ -233,8 +233,7 @@ export function Landing({ onSignIn, hasDemo }) {
         <PreviewMock />
       </div>
 
-      {DEMO_VIDEO_ID ? (
-        <section className="lp-section" id="video">
+      <section className="lp-section" id="video">
           <div className="lp-head">
             <h2>See a real call, start to finish</h2>
             <p>
@@ -243,7 +242,6 @@ export function Landing({ onSignIn, hasDemo }) {
           </div>
           <DemoVideo id={DEMO_VIDEO_ID} />
         </section>
-      ) : null}
 
       <section className="lp-strip">
         <div className="lp-strip-head">

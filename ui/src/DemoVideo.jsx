@@ -12,7 +12,15 @@ import { useState } from 'react';
 export function DemoVideo({ id, title = 'DeskHelp in three minutes' }) {
   const [playing, setPlaying] = useState(false);
 
-  if (!id) return null;
+  // Before the video is published there is nothing to load, so the frame holds
+  // its place with the brand behind it rather than a dead play button.
+  if (!id) {
+    return (
+      <div className="video-frame video-pending" aria-hidden="true">
+        <span className="video-label">Demo video</span>
+      </div>
+    );
+  }
 
   if (playing) {
     return (
