@@ -12,7 +12,14 @@
 
 import { Logo } from '../Logo.jsx';
 import { LoginScene } from '../LoginScene.jsx';
+import { DemoVideo } from '../DemoVideo.jsx';
 import { greeting } from '../greeting.js';
+
+/**
+ * The YouTube id of the demo. Empty until the video is up, and the section
+ * hides itself rather than showing a broken player.
+ */
+const DEMO_VIDEO_ID = '';
 
 const WORKFLOWS = [
   'Fee reminder',
@@ -225,6 +232,18 @@ export function Landing({ onSignIn, hasDemo }) {
       <div className="lp-shot pop" style={{ animationDelay: '0.18s' }}>
         <PreviewMock />
       </div>
+
+      {DEMO_VIDEO_ID ? (
+        <section className="lp-section" id="video">
+          <div className="lp-head">
+            <h2>See a real call, start to finish</h2>
+            <p>
+              One workflow, one phone, and what came back afterwards.
+            </p>
+          </div>
+          <DemoVideo id={DEMO_VIDEO_ID} />
+        </section>
+      ) : null}
 
       <section className="lp-strip">
         <div className="lp-strip-head">
