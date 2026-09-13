@@ -18,16 +18,19 @@
 
 ---
 
-Every Monday somebody at a coaching institute picks up the phone and works
-through the same list. Fees due on Friday. A child missing from the morning
-batch. Twenty people who asked about admission in June and were never called
+Every Monday somebody at a front desk picks up the phone and works through the
+same list. Money owed on Friday. Tomorrow's appointments to confirm. Somebody
+who has not turned up. Twenty people who enquired in June and were never called
 back. It takes a person most of a week, and the week after that it starts
 again.
 
 DeskHelp makes those calls and tells you what each one settled.
 
-It is built for schools, colleges and coaching institutes, and it works in any
-office that runs on the phone. Calls happen through
+It works in any office that runs on the phone — clinics, dealerships, agencies,
+workshops, service desks, schools. Fourteen workflows ship written out and
+switched off, so there is something to turn on the day you arrive, and writing
+the fifteenth for your own office is a description rather than a module. Calls
+happen through
 [CALL-E](https://www.heycall-e.com/); everything about who to call, when, what
 may be said and what the answer meant is DeskHelp's.
 
@@ -49,7 +52,7 @@ may be said and what the answer meant is DeskHelp's.
 </p>
 
 <p align="center">
-  <sub><strong>Read the call, not a summary of it.</strong> A real reminder placed from the product. What the office said sits on the left, the family's own words on the right, and underneath, the answers DeskHelp was willing to keep.</sub>
+  <sub><strong>Read the call, not a summary of it.</strong> A real reminder placed from the product. What the office said sits on the left, the other person's own words on the right, and underneath, the answers DeskHelp was willing to keep.</sub>
 </p>
 
 <table>
@@ -59,7 +62,7 @@ may be said and what the answer meant is DeskHelp's.
 </tr>
 <tr>
 <td align="center"><sub><strong>Switch on what your office makes.</strong> Each one shows its schedule and the next three dates before you arm it.</sub></td>
-<td align="center"><sub><strong>Answer once.</strong> A question captured on one call is delivered word for word on the next call to that family.</sub></td>
+<td align="center"><sub><strong>Answer once.</strong> A question captured on one call is delivered word for word on the next call to that person.</sub></td>
 </tr>
 </table>
 
@@ -89,7 +92,7 @@ npm run ui:build   # once
 npm start          # http://127.0.0.1:4321
 ```
 
-A fresh database seeds an institute with 124 families, approved wording, four
+A fresh database seeds a demo office with 124 contacts, approved wording, four
 workflows switched on and a review queue with real questions in it, so nothing
 you open is empty.
 
@@ -121,12 +124,12 @@ A bot reads a script. DeskHelp is built around the fact that the answer coming
 back is the hard part.
 
 **It calls in the language people speak.** Hindi, English, or the mix of both
-that Indian families actually use on the phone. It follows the parent rather
-than insisting on one language.
+that people in India actually use on the phone. It follows whoever picked up
+rather than insisting on one language.
 
 **It never improvises.** You write what may be said. Asked anything else, the
 call says somebody will confirm and writes the question down word for word.
-You answer it once in the review queue, and the next call to that family
+You answer it once in the review queue, and the next call to that person
 delivers your answer verbatim. Without that loop, capturing a question is a
 dead end and the promise made on the phone is one nobody keeps.
 
@@ -194,14 +197,27 @@ belongs around those primitives.
 | `transcript_turns`, `evidence`, `completion_confidence` | Grounding every stored field in what was said |
 
 CALL-E deliberately does not do recurrence. That is DeskHelp's job, and it is
-the part an institute actually wanted: "remind the unpaid families two days
-before the month ends" is a sentence about a calendar, not about a phone.
+the part an office actually wanted: "remind everybody who has not paid, two
+days before the month ends" is a sentence about a calendar, not about a phone.
 
 ## Use cases
 
 <table>
-<tr><th align="left">Education hubs</th><th align="left">Any office</th></tr>
+<tr><th align="left">Any office &mdash; the work a front desk does</th><th align="left">Schools and coaching institutes &mdash; fourteen ready to switch on</th></tr>
 <tr valign="top"><td>
+
+- Confirming tomorrow's appointments, one by one
+- Asking why somebody has not arrived for a shift
+- Reminding a customer about a payment that is due
+- Chasing a document or a signature somebody owes you
+- Checking a supplier can still make the delivery date
+- Following up an enquiry that went quiet weeks ago
+- Confirming a delivery or a service window
+- A short feedback survey after a job is finished
+- Telling a list of people one approved thing
+- Collecting one answer from every name on a list
+
+</td><td>
 
 - Fee reminders, before and after the due date
 - A child missing from the morning batch
@@ -209,15 +225,6 @@ before the month ends" is a sentence about a calendar, not about a phone.
 - Demo class follow-ups
 - Parent meeting slots
 - Cover when a teacher cannot come in
-
-</td><td>
-
-- Staff attendance, and why somebody has not arrived
-- Confirming an appointment or delivery window
-- Chasing a document somebody owes you
-- Checking a vendor can still make the date
-- A short feedback survey after a job
-- Telling a list of people one approved thing
 
 </td></tr>
 </table>
