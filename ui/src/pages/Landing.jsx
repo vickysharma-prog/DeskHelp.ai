@@ -219,9 +219,9 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
 
         <p className="rise" style={{ animationDelay: '0.1s' }}>
           DeskHelp rings people, asks what you need to know, and tells you what
-          each call settled. It does the calling a front desk does all week —
+          each call settled. It does the calling a front desk does all week:
           reminders, confirmations, chasing what somebody owes you, asking why
-          somebody has not arrived — in the language the person picks up in.
+          somebody has not arrived. It speaks the language they pick up in.
         </p>
 
         <div className="lp-cta rise" style={{ animationDelay: '0.15s' }}>
@@ -281,7 +281,7 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
           <p>
             The same engine every time. A workflow is a short description of who
             to call, what may be said to them, and what a useful answer looks
-            like — so the questions change and nothing underneath does.
+            like. The questions change and nothing underneath does.
           </p>
         </div>
         <div className="lp-uses">

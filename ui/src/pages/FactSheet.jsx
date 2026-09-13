@@ -7,7 +7,7 @@
  *
  * Publishing creates a new version rather than editing in place, so what the
  * agent said on a call last month can be checked against the wording that was
- * live then — not against whatever the office has changed since.
+ * live then, not against whatever the office has changed since.
  */
 
 import { useEffect, useState } from 'react';

@@ -26,7 +26,7 @@ again.
 
 DeskHelp makes those calls and tells you what each one settled.
 
-It works in any office that runs on the phone — clinics, dealerships, agencies,
+It works in any office that runs on the phone: clinics, dealerships, agencies,
 workshops, service desks, schools. Fourteen workflows ship written out and
 switched off, so there is something to turn on the day you arrive, and writing
 the fifteenth for your own office is a description rather than a module. Calls
@@ -203,7 +203,7 @@ days before the month ends" is a sentence about a calendar, not about a phone.
 ## Use cases
 
 <table>
-<tr><th align="left">Any office &mdash; the work a front desk does</th><th align="left">Schools and coaching institutes &mdash; fourteen ready to switch on</th></tr>
+<tr><th align="left">Any office: the work a front desk does</th><th align="left">Schools and coaching institutes: fourteen ready to switch on</th></tr>
 <tr valign="top"><td>
 
 - Confirming tomorrow's appointments, one by one

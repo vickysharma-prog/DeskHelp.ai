@@ -3,7 +3,7 @@
  *
  * Every field here is declared rather than detected. DeskHelp will not infer a
  * timezone from a `+91`, a jurisdiction from a locale, or a calling window from
- * anything at all — a guess about which country somebody is in becomes a call
+ * anything at all. A guess about which country somebody is in becomes a call
  * at 3am, and the person who receives it has no idea why.
  *
  * The allow list is the second of the two gates that stand between this
