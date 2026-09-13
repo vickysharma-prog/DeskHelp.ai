@@ -42,7 +42,10 @@ Phase: **built, deployed, proven on real calls, video published. The pull reques
 
 ## Proven on real calls, not just in tests
 
-Five calls connected across the day and did everything the product claims:
+Seven calls connected across the day and did everything the product claims.
+Twelve of the twenty free CALL-E calls were spent to get them, and the ones
+that never connected are the failed India routes from before the account owned
+an outbound number.
 
 | Behaviour | Evidence |
 | --- | --- |
@@ -63,12 +66,15 @@ Free workflow and contact pairs, as of the last session: everything except
 
 ## Not done
 
-1. **The Devpost form**, and the feedback survey, which is a separate prize.
-2. **A shorter cut of the video.** The published one runs 7:29. The rules say
-   it "should be less than three (3) minutes" and that "judges are not required
-   to watch beyond three", and the first real call starts at 2:55. Not a
-   disqualification, but everything that proves the product sits past the mark
-   a judge may stop at.
+1. **The Devpost form.** Every field is written out ready to paste in
+   [`DEVPOST.md`](DEVPOST.md). The one thing it cannot fill is the CALL-E
+   account email, which should be read off the account rather than from memory.
+2. **The feedback survey**, which is its own prize, five winners at $200. Do it
+   once the form is in.
+
+The video runs 7:29 where the rules ask for about three, so chapter links point
+straight at the call at 2:55 and the refusals at 4:35. Those links are in the
+pull request, the README and on the landing page.
 
 ---
 

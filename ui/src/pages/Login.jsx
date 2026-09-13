@@ -256,7 +256,7 @@ export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
                   </>
                 ) : (
                   <>
-                    Setting up a new institute?{' '}
+                    Setting up a new office?{' '}
                     <button onClick={() => setMode('signup')}>Create an account</button>
                   </>
                 )}
