@@ -1,5 +1,5 @@
 /**
- * The domain model every Ghanti workflow is built from.
+ * The domain model every DeskHelp workflow is built from.
  *
  * There is one engine. A workflow is not code: it is an ActionDefinition, a
  * declarative description of who is called, what may be said to them, and what
@@ -53,7 +53,7 @@ export type Sensitivity =
  *
  * `answers` is deliberately a closed set. An open-ended question produces
  * prose that nobody can act on and that cannot be checked against a
- * transcript, so the only free-text capture Ghanti performs is the verbatim
+ * transcript, so the only free-text capture DeskHelp performs is the verbatim
  * quote attached to an answer.
  */
 export interface Question {
@@ -107,7 +107,7 @@ export interface FactSheet {
 }
 
 /**
- * A workflow. Fourteen of these ship with Ghanti; an institute enables the
+ * A workflow. Fourteen of these ship with DeskHelp; an institute enables the
  * ones it wants and ignores the rest.
  */
 export interface ActionDefinition {
