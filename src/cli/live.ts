@@ -69,6 +69,10 @@ async function main(): Promise<void> {
       name: { type: 'string', default: 'Test Recipient' },
       confirm: { type: 'boolean', default: false },
       digits: { type: 'string' },
+      // Which handset to ring. Two of them means a workflow can be tested
+      // twice over without waiting out the contact cooldown, because the
+      // cooldown is per contact and each handset is its own contact.
+      phone: { type: 'string', default: '1' },
     },
     allowPositionals: true,
   });
@@ -82,11 +86,15 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const phone = env.DESKHELP_TEST_PHONE ?? '';
+  // Numbers stay in .env and are chosen by position, never typed on the
+  // command line, so a real number never reaches shell history either.
+  const second = values.phone === '2';
+  const phoneVar = second ? 'DESKHELP_TEST_PHONE_2' : 'DESKHELP_TEST_PHONE';
+  const phone = env[phoneVar] ?? '';
   if (!isValidE164(phone)) {
     console.error(
-      '\nSet DESKHELP_TEST_PHONE in .env to the E.164 number you are authorised\n' +
-        'to call, for example +919876543210. It is never read from anywhere else.\n',
+      `\nSet ${phoneVar} in .env to the E.164 number you are authorised to\n` +
+        'call, for example +919876543210. It is never read from anywhere else.\n',
     );
     process.exit(1);
   }
@@ -116,7 +124,10 @@ async function main(): Promise<void> {
   }
 
   const contact: Contact = {
-    id: 'live-test',
+    // Each handset is its own contact, so its history, its cooldown and its
+    // call-to-call memory are its own. Sharing one id across two numbers would
+    // make the second handset inherit the first one's conversation.
+    id: second ? 'live-test-2' : 'live-test',
     fullName: values.name!,
     phone,
     preferredRegister: values.register as SpokenRegister,
