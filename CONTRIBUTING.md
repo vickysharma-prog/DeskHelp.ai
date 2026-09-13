@@ -6,7 +6,7 @@ everything, and the rest is ordinary.
 ## Before anything
 
 ```bash
-npm run check     # typecheck and 163 tests, about five seconds
+npm run check     # typecheck and 171 tests, about five seconds
 npm run demo      # the whole loop on scripted calls, no credentials
 ```
 

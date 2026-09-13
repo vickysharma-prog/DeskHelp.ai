@@ -3,8 +3,8 @@
 **Read this first when resuming.** It says where the work stands and what the
 next action is. Update it at the end of every working session.
 
-Last updated: **2026-09-12, late evening**
-Phase: **built, deployed and pushed. The live call and the video remain.**
+Last updated: **2026-09-13, early afternoon**
+Phase: **built, deployed, and proven on real calls. The video remains.**
 
 ---
 
@@ -17,76 +17,92 @@ Phase: **built, deployed and pushed. The live call and the video remain.**
 | Live site | <https://deskhelp.onrender.com> |
 | Demo login | `demo@deskhelp.ai` / `demo-northline-2026`, and a button on the sign-in page |
 | CALL-E repo clone | `C:\Users\admin\calle-hack` (fork: `vickysharma-prog`) |
+| **Deadline** | **14 Sep 2026, 9:15pm IST** |
 
 ---
 
 ## Done
 
 - Engine, 14 workflows, scheduler, contact import, review queue, call-to-call
-  memory. 163 tests and a typecheck, all green.
+  memory. **171 tests** and a typecheck, all green.
 - Accounts, sessions, the web interface, a landing page, and a seeded demo of
-  124 families with 14 questions waiting in the queue.
-- Repository public under MIT, with a README carrying four screenshots taken by
-  `scripts/screenshots.mjs`, and a CONTRIBUTING built around the three rules.
-- Deployed on Render from `render.yaml`. Every push to `main` redeploys, so the
-  live link is always current.
-- The link carries an Open Graph card, a favicon, robots and a sitemap.
-- `.env` holds the CALL-E key, the live flag and the test number. The live gate
-  is open locally and verified: `npm run live` prints "Gate: OPEN".
+  124 families with questions waiting in the queue.
+- **Calls are placed from the product.** A `Call now` button on each workflow,
+  scoped to one named person per press, with the name and number on the button.
+- **A Calls page**, which reads back the whole conversation: the transcript
+  with the two speakers apart, the answers kept, the promises filed as
+  promises, the questions refused.
+- Adding one contact by hand, without writing a CSV.
+- Repository public under MIT, README with screenshots, CONTRIBUTING.
+- Deployed on Render from `render.yaml`. Every push to `main` redeploys.
+- The public deployment still cannot dial: `DESKHELP_LIVE` is false there and
+  the allow list is empty. Verified after every deploy.
 
-## Not done
+## Proven on real calls, not just in tests
 
-1. **One real call.** Nothing has been dialled yet. All twenty free calls are
-   unspent.
-2. **The demo video.** About three minutes, on YouTube, publicly visible.
-3. **The video on the landing page.** One line: `DEMO_VIDEO_ID` in
-   `ui/src/pages/Landing.jsx`. The section already exists and shows a branded
-   placeholder until an id is set.
-4. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
-   each in `apps/README.md` and the CALL-E repo's root `README.md`. No code
-   goes in it: it is a catalogue pointer to this repository, following the
-   pattern of the merged entries `speakeasy` and `supplycall-ai`.
-5. **The Devpost form**, and the feedback survey, which is a separate prize.
+Two calls connected and did everything the product claims:
+
+| Behaviour | Evidence |
+| --- | --- |
+| Calls in Hinglish, follows the recipient | Agent opened in English, switched to Hindi when the parent did |
+| Refuses what is not on the sheet | Scholarship, joining date and a discount all refused, three times in one call, without softening |
+| Captures the question verbatim | All three landed in the review queue in the caller's own Hindi |
+| A promise is a promise, not a fact | `will_join = yes` stored as a claim carrying the exact quote, `confirmed: false` |
+| The identity gate holds | A parent answering for the named student produced `identity_confirmed = no`, and nothing was attributed to them |
+| The contact cooldown holds | A second reminder an hour later was refused: "Last contacted 1.0h ago; this action requires 120h between calls" |
 
 ---
 
-## Tomorrow, in order
+## Not done
 
-Only after **9am IST**. The Indian calling window is 09:00 to 21:00 and the
-guard refuses outside it. This was hit on the evening of the 12th at 21:52,
-which is the safety working rather than a bug.
+1. **The demo video.** About three minutes. See the plan below.
+2. **The video on the landing page.** One line: `DEMO_VIDEO_ID` in
+   `ui/src/pages/Landing.jsx`. The section already exists and shows a branded
+   placeholder until an id is set.
+3. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
+   each in `apps/README.md` and the CALL-E repo's root `README.md`. No code
+   goes in it: it is a catalogue pointer to this repository.
+4. **The Devpost form**, and the feedback survey, which is a separate prize.
 
-```bash
-npm start                                          # one terminal
-npm run live -- --action fee-reminder --confirm    # another
-```
+---
 
-It asks for the last four digits of the number before it dials.
+## The video, as planned
 
-The recording, in one take:
+Three minutes, in three parts:
 
-1. The dashboard: 124 contacts, 14 questions waiting
-2. A dry run on a workflow, showing the exact words
-3. The `--confirm` command, and the phone ringing
-4. Speak Hindi and English mixed, the way a parent actually would
-5. **Ask something the fact sheet does not cover**, for instance whether a
-   scholarship is available. This is the moment that separates DeskHelp from a
-   voice bot: the caller refuses to answer and writes the question down.
-6. The structured result in the terminal: the answers, the claim, the captured
-   question
-7. Refresh the browser: the same call on the dashboard and in the queue
-8. Answer the question in the queue
+1. **About ninety seconds on the product.** What it is, what an institute
+   actually does with it, the fourteen workflows, the dry run showing the exact
+   words, the review queue.
+2. **A real call, placed from the product.** Press `Call now`, the phone rings,
+   speak Hinglish as a parent would. Ask something nobody approved, and press
+   once when it refuses. Then open **Calls** and read the conversation back.
+3. **Close on the line:** *now your agent can call on behalf of you.*
+
+Two things to get right in the take:
+
+- **Let the agent finish.** Speaking over its opening makes it start again. One
+  take has that line four times in a row.
+- **Confirm identity plainly.** Answer "Kya aap S. Verma hain?" with "haan,
+  main S. Verma bol raha hun". Anything less produces `needs-human`, correctly.
+
+Free workflow and contact pairs, as of the last session: `fee-reminder` on
+S. Verma, and everything except `demo-class-followup` on either handset.
 
 ---
 
 ## Standing reminders
 
-- **20 CALL-E calls, none spent.** Keep three or four for the video; the first
-  take is never the one that ships.
-- **The real number never leaves `.env`.** Fixtures use the NXX-555-01XX range
-  that exists so nobody's actual phone rings in a demo.
+- **20 CALL-E calls, 6 spent, 14 left.**
+- **CALL-E's shared number pool does not reach India.** The account now owns
+  `+1 208-428-4381` as its default outbound number, $2.00/month, identity
+  verified. That is what made calling work. Their announcement of 6 and 7 Sept
+  documents the restriction.
+- **The real numbers never leave `.env`.** `DESKHELP_TEST_PHONE` and
+  `DESKHELP_TEST_PHONE_2`. Fixtures use the NXX-555-01XX range.
 - Render's free tier sleeps after fifteen minutes. Open the link yourself a
   minute before handing it to anybody.
-- The public deployment cannot dial: `DESKHELP_LIVE` is false there and the
-  allow list is empty.
-- Cite `roll-call` (PR #325) as prior art in the submission.
+- Cite `roll-call` (PR #325) as prior art in the submission, and `ringfence`
+  for the connection-failure distinction.
+- Speech to text sometimes renders a stumbled greeting as something
+  unrepeatable. Check a transcript before putting it in a screenshot;
+  `DESKHELP_SHOT_CALL` picks which call `scripts/screenshots.mjs` opens.

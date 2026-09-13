@@ -3,7 +3,7 @@
 Every decision, with the evidence behind it. **Ideas that were investigated and
 ruled out are recorded here on purpose** — re-proposing one costs a session.
 
-Last updated: 2026-09-12
+Last updated: 2026-09-13
 
 ---
 
@@ -159,6 +159,66 @@ best. Candidates: demo-class follow-up (zero competition, safest), scheduled
 fee reminder (shows the scheduler, our real differentiator), admission interest
 follow-up (shows fact-sheet + refusal + question capture most clearly).
 
+
+### ✅ Calls are placed from the product, not a command line
+
+An institute does not have a terminal, and neither does a judge watching a
+demo. `Call now` sits on the workflow, asks who to ring, and puts the name and
+the number on the button.
+
+It is deliberately **not** the preview endpoint with the flag removed. That one
+runs across every contact, and a button labelled "Call now" that fans a
+workflow out over the whole list is not something an office should be able to
+lean on by accident. One press is one call to one person.
+
+Whether a phone rings is still the gate's decision, so the same button on the
+public demo walks the same path and dials nobody. That is what makes the live
+link safe to hand to strangers who can also see Settings.
+
+### ✅ The Calls page, and storing the transcript
+
+Every other screen shows a conclusion. This one shows what those conclusions
+were drawn from, which is the only way anybody can check them. An institute
+that cannot read the call has to take the summary on trust, and a summary
+nobody can check is worth very little when the subject is somebody's fees or
+somebody's child.
+
+The transcript is **stored** rather than fetched on view, so reading a call
+does not depend on holding a live API key. The public demo has no key.
+
+### ✅ A call that never connected is not a contact
+
+Four provider failures in a row each started a five-day cooldown on that
+person. An institute whose route has a bad afternoon would be locked out of
+calling anybody for a week, and the ledger would claim those families had been
+contacted.
+
+A connected call always carries the agent's own opening line, so no turns at
+all means the line was never joined. Those no longer count. A call that did
+reach somebody still counts whatever it concluded.
+
+### ✅ CALL-E's narrow JSON Schema slice is checked before sending
+
+CALL-E accepts `type`, `properties`, `required`, `enum`, `items`,
+`description` and `additionalProperties: false`, and nothing else. A schema
+mistake is otherwise discovered by a round trip that returns
+`result_schema_invalid`, which reads like the call failed rather than the
+request being malformed. The vocabulary is the one the maintainers' own `kept`
+documents and enforces.
+
+### ✅ A refusal beats a non-connection, and an unknown outcome beats both
+
+CALL-E reports an unanswered phone as `status: failed` with the reason only in
+prose, and its own documentation says the API does not guarantee a distinct
+no-answer or callee-decline value. So the prose is a hint, never a verdict.
+
+The order is the safety. A hang-up wins over a no-answer, because mistaking a
+refusal for a missed call means the more clearly somebody refuses the more
+often they are rung. An attempt whose start and finish are the same instant is
+a connection failure and says nothing about the recipient, whatever the prose
+claims — the mislabel `ringfence` found against the live API and corrected.
+Anything still unrecognised reaches a person, as ADR 0006 requires.
+
 ---
 
 ## Part 3 — Facts established by investigation
@@ -178,3 +238,19 @@ Worth keeping because they were expensive to establish.
 | TRAI: commercial calls 9am–9pm only; DND registry; `140` prefix; penalties to ₹10 lakh | TCCCPR 2018 |
 | Plugin contributions can be small | `dify-template` is 3 files / 137 lines; `n8n-calle-api` is 4 files / 510 lines |
 | Maintainers' own reference plugin sets the quality bar | `zapier-calle`: 65 files / 11,399 lines, with calling-window, opt-out, retry-policy, idempotency, disposition, grounding, redaction |
+
+---
+
+## Part 4 — Facts established by placing real calls
+
+Expensive to learn, and none of them visible against a fixture.
+
+| Fact | Evidence |
+| --- | --- |
+| CALL-E's shared number pool does not reliably reach India | Their own announcements, 6 and 7 Sept: the pool "may be unavailable in certain regions" and is "intended for development and dialing tests" |
+| The fix is to own an outbound number | `+1 208-428-4381`, US local, $2.00/month, plus identity verification to enable outbound. Every call since has connected |
+| The API has no way to choose the caller number | Nothing in any of the 380 submissions sends one. CALL-E picks the account default, which is set in the dashboard |
+| Failed attempts still cost credits | 6 credits each, against 47 for a connected minute |
+| There is no account, usage or billing endpoint | `/v1/account`, `/v1/usage`, `/v1/balance`, `/v1/credits`, `/v1/limits` all 404. The dashboard is the only source |
+| A hackathon testing hotline exists | `+1 276-322-9632`, English, offered by a maintainer for exactly this disruption |
+| Speech to text will occasionally render a stumbled greeting as an obscenity | Seen once. A transcript is a record, so the fix is to choose a different call for a screenshot, never to edit one |

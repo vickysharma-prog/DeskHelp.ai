@@ -171,9 +171,14 @@ international line. Full list in the CALL-E integrations README.
 - **The real test phone number is in `.env` only.** It must never appear in
   code, README, fixtures, commit messages or documentation. Repository rules
   require masked or standards-reserved fictional numbers everywhere else.
-- Call budget is **20 free CALL-E calls total** — development, testing and the
-  demo recording all come out of it. Reserve several for the video; the first
-  take is never the one you ship.
+- Call budget is **20 free CALL-E calls total**, 6 spent. Reserve several for
+  the video; the first take is never the one you ship.
+- **Two test handsets**, `DESKHELP_TEST_PHONE` and `DESKHELP_TEST_PHONE_2`,
+  chosen by position (`--phone 2`) so a number never reaches a command line.
+  Each is its own contact, with its own history and its own cooldown.
+- **CALL-E's shared number pool does not reach India.** The account owns
+  `+1 208-428-4381` as its default outbound number, identity verified. That is
+  what made calling work at all; see `docs/DECISIONS.md` Part 4.
 
 ---
 
@@ -199,5 +204,18 @@ python scripts/create_branch.py <type>/<short-kebab-summary>
 ```bash
 npm run demo       # end-to-end, fixtures only, no network, no credentials
 npm run preview    # render a call plan and exit without dialling
-npm test           # node --test
+npm run check      # typecheck and 171 tests. `npm test` alone misses type errors
+npm start          # the product, at http://127.0.0.1:4321
+
+npm run live -- --action fee-reminder                        # shows the words, dials nobody
+npm run live -- --action fee-reminder --confirm --digits NNNN
+npm run live -- --action fee-reminder --phone 2 --confirm --digits NNNN
+
+node scripts/rejudge.ts --call call_xxx            # re-read a finished call, costs nothing
+node scripts/rejudge.ts --call call_xxx --apply    # and store the new reading
+node scripts/screenshots.mjs                       # DESKHELP_SHOT_CALL picks which call to open
 ```
+
+Calls are normally placed from the product itself: **Workflows → Call now**,
+one named person per press. The command line exists for a machine with no
+browser.

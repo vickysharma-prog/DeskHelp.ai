@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/node-%E2%89%A522.5-111111?style=flat-square" alt="Node 22.5 or later">
-  <img src="https://img.shields.io/badge/tests-163%20passing-111111?style=flat-square" alt="163 tests">
+  <img src="https://img.shields.io/badge/tests-171%20passing-111111?style=flat-square" alt="171 tests">
   <img src="https://img.shields.io/badge/runtime%20deps-0-111111?style=flat-square" alt="No runtime dependencies">
   <img src="https://img.shields.io/badge/calls-dry%20run%20by%20default-111111?style=flat-square" alt="Dry run by default">
 </p>
@@ -33,6 +33,14 @@ may be said and what the answer meant is DeskHelp's.
 
 <p align="center">
   <img src="assets/screens/tour.gif" width="820" alt="A tour: the dashboard, the fourteen workflows, a dry run showing the exact words, and the review queue">
+</p>
+
+<p align="center">
+  <img src="assets/screens/transcript.png" width="860" alt="A real call, read back inside the product: the transcript, then the answers it established">
+</p>
+
+<p align="center">
+  <sub><strong>Read the call, not a summary of it.</strong> A real reminder placed from the product. What the office said sits on the left, the family's own words on the right, and underneath, the answers DeskHelp was willing to keep.</sub>
 </p>
 
 <table>
@@ -225,7 +233,7 @@ src/core/            the engine, which knows nothing about education
 
 src/packs/education/ fourteen workflows, as configuration
 src/server/          HTTP API, accounts, sessions, the demo seed
-ui/                  the web interface
+ui/                  the web interface, including the call log and transcripts
 ```
 
 A fifteenth workflow is another object in `src/packs/education/actions.ts`. A
@@ -246,21 +254,22 @@ DESKHELP_LIVE=true               # exactly "true", not "1" and not "yes"
 DESKHELP_TEST_PHONE=+91...       # a number you are authorised to call
 ```
 
-Show exactly what would be said, without dialling:
+Then add that number to the allow list in **Settings**, put the person on
+**Contacts**, and press **Call now** on a workflow. It asks who to ring and
+puts their name and number on the button, so what is about to happen is never
+in doubt. One press is one call to one person.
+
+When it finishes, **Calls** has the whole conversation: what was said, the
+answers it kept, the promises it filed as promises, and any question it
+refused to answer. There is a command line too, for a machine with no browser:
 
 ```bash
-npm run live -- --action fee-reminder
+npm run live -- --action fee-reminder                       # shows the words, dials nobody
+npm run live -- --action fee-reminder --confirm --digits NNNN
 ```
 
-Place the call:
-
-```bash
-npm run live -- --action fee-reminder --confirm
-```
-
-It asks you to type the last four digits before it dials, prints the answers it
-kept, the claims it refused to treat as facts, and anything the caller said
-that it had no approval for.
+The last four digits of the number are the confirmation, so dialling is never
+one keystroke away from a typo.
 
 Your number stays in `.env`. It never reaches source, a fixture, a log or a
 commit, and everything printed masks it.
@@ -268,7 +277,7 @@ commit, and everything printed masks it.
 ## Tests
 
 ```bash
-npm run check     # typecheck and 163 tests
+npm run check     # typecheck and 171 tests
 ```
 
 Weighted towards the refusals rather than the happy path: unusable timezones,

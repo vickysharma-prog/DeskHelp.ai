@@ -81,6 +81,18 @@ async function main() {
   await page.getByRole('button', { name: 'Close' }).click();
   await page.waitForTimeout(600);
 
+  // The call log, opened on a real call. This is the part of the tour worth
+  // the most: everything else is a conclusion, and this is the conversation
+  // those conclusions came from.
+  await page.getByRole('button', { name: /^Calls/ }).click();
+  await page.waitForTimeout(1400);
+
+  const call = page.locator('.card', { hasText: '13 Sept, 12:07' }).first();
+  if (await call.count()) {
+    await call.locator('.card-head button').last().click();
+    await page.waitForTimeout(2600);
+  }
+
   await page.getByRole('button', { name: /^Review queue/ }).click();
   await page.waitForTimeout(1800);
 

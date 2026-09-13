@@ -5,6 +5,109 @@ done, what was learned, what broke. Opinions belong in `DECISIONS.md`.
 
 ---
 
+## 2026-09-13 — First real calls, five bugs, and calling from the product
+
+The day the engine met the real CALL-E API. Every bug found today lived in the
+same place: the inch between this codebase and the provider. None of them were
+in the product logic, the safety rules or the interface, and none of them could
+have been found by any amount of testing against a fixture.
+
+### Calls placed
+
+Six of twenty spent. Two connected.
+
+| Time (IST) | Workflow | Result |
+| --- | --- | --- |
+| 12:07 | fee-reminder | Connected, 1m 5s, 20 turns, Hindi |
+| 12:24 | fee-followup | Never rang |
+| 12:33 | fee-followup | Never rang |
+| 13:10 | fee-reminder | Never rang |
+| 13:32 | admission-interest-followup | Never rang |
+| 13:37 | demo-class-followup | Connected, 1m 46s, 32 turns |
+
+### What the connected calls proved
+
+The second one exercised the whole product in a single call: three questions
+nobody had approved (a scholarship, a joining date, a fee discount), all three
+refused with the same line and captured verbatim in Hindi; a stated intention
+to join stored as a `Claim` with the exact quote and `confirmed: false`; and
+the identity gate firing correctly when a parent answered for the named
+student, so nothing was attributed to that student.
+
+### Bugs found and fixed
+
+1. **A preview reached the transport.** `runAction` returned early only for
+   contacts a guard had refused; every allowed contact fell through to building
+   a body and handing it to whatever transport the caller passed. The live CLI
+   passed an HTTP transport, so the dry run was making real requests to CALL-E.
+   Nothing dialled, but only because that transport had a placeholder key. The
+   existing preview test checked the ledger and stopped there, so the fixture
+   collected the calls and said nothing.
+
+2. **`result_schema` used a shape CALL-E rejects.** `evidence_quotes` was an
+   open map keyed by question id; CALL-E refuses open objects. Now a closed
+   object with one named slot per question that demands evidence, and
+   `placeCall` checks the whole schema against CALL-E's narrow JSON Schema
+   vocabulary before sending, on every path including fixtures.
+
+3. **The transcript was read from the wrong place.** CALL-E files turns at
+   `recipients[].attempts[].transcript_turns`; this read the recipient level,
+   which is always absent. Grounding therefore had nothing to check against, so
+   **every answer marked `requiresEvidence` was discarded and every completed
+   call landed on a person**. The first real call came back `needs-human` with
+   its best answer thrown away, on a call that had gone perfectly.
+
+4. **A route that never connected was read as a person who did not answer.**
+   CALL-E reports an unanswered phone as `status: failed` with the reason only
+   in prose. Reading the status alone filed it as `needs-human`, so the retry
+   never fired. Reading the prose alone was worse: both real failures had an
+   attempt whose start and finish were the same instant, which is a connection
+   failure and says nothing about the recipient. `ringfence` in the submissions
+   repo documents the same mislabel, found the same way.
+
+5. **A call that never connected started a five-day cooldown.** Four failures
+   in a row locked both test contacts out of their workflows. An institute
+   whose route has a bad afternoon would be unable to call anybody for a week,
+   and the ledger would say those families had been contacted.
+
+### Built
+
+- **A Calls page.** Every other screen shows a conclusion; this shows what
+  those conclusions were drawn from. Transcript with the two speakers apart,
+  answers kept, promises filed as promises, questions refused.
+- **`Call now`**, one named person per press, with the name and number on the
+  button. Deliberately not the preview endpoint with the flag removed, which
+  runs across every contact.
+- **Adding one contact** without hand-writing a CSV.
+- `transcript_json` on `call_outcome`, with a migration, so reading a call does
+  not depend on holding a live API key.
+- `scripts/rejudge.ts`, which re-reads a finished call with the current engine
+  and costs no calls. Used to correct all four stored judgements after the
+  fixes landed.
+- Two test handsets, chosen by position so the numbers stay in `.env`.
+
+### The thing that was not our bug
+
+Four calls in a row failed with zero ring time. CALL-E's own announcements, of
+6 and 7 September, say the **shared public number pool is unavailable in some
+regions** and recommend buying a US or Brazil number. Buying
+`+1 208-428-4381` ($2.00/month), verifying identity, and setting it as the
+default outbound number fixed it immediately. Both connected calls since have
+worked.
+
+Evidence that ruled out every other explanation before the number was bought:
+the same phone worked at 12:07 and failed at 12:24; two different numbers
+failed with two different codes; request bodies were structurally identical
+between the call that worked and the ones that did not.
+
+### Tests
+
+163 → **171**. Every fix above carries one, including the assertion whose
+absence hid the first bug: a preview must not hand a body to the transport at
+all.
+
+---
+
 ## 2026-09-12 (later) — Engine core built, 57 tests green
 
 Named **DeskHelp**. Folder renamed from `ghanti`; all identifiers updated.

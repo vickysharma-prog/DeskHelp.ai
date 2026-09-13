@@ -83,6 +83,50 @@ async function main() {
   await page.waitForTimeout(400);
 
   // --- the review queue ----------------------------------------------------
+  // The Calls page, opened on a real call. Which one matters: speech to text
+  // will occasionally render a stumbled "hello" as something unrepeatable,
+  // and this image ends up in a public README. Check the call before shipping
+  // the screenshot, and prefer one that reads cleanly end to end.
+  await page.getByRole('button', { name: /^Calls/ }).click();
+  await page.waitForTimeout(900);
+  await shot('calls');
+
+  // Find a call that actually has words in it, rather than trusting the
+  // order on the page: most rows are seeded outcomes with no transcript, and
+  // a real call that never connected has none either. Open each in turn and
+  // keep the first one that renders turns.
+  // Find a call that actually has words in it, rather than trusting the order
+  // on the page: most rows are seeded outcomes with no transcript, and a real
+  // call that never connected has none either. The toggle is matched by its
+  // place in the card rather than its label, because the label changes to
+  // Hide the moment it is pressed.
+  // DESKHELP_SHOT_CALL narrows it to one call when the first one with words in
+  // it is not the one to publish. Speech to text renders a stumbled greeting
+  // as something unrepeatable often enough to matter, and a transcript is a
+  // record of what was said, so the fix is to choose a different call rather
+  // than to edit one.
+  const only = process.env.DESKHELP_SHOT_CALL;
+  const cards = only ? page.locator('.card', { hasText: only }) : page.locator('.card');
+  const total = await cards.count();
+  for (let index = 0; index < total; index += 1) {
+    const card = cards.nth(index);
+    const toggle = card.locator('.card-head button').last();
+    if ((await toggle.count()) === 0) continue;
+
+    await toggle.click();
+    await page.waitForTimeout(700);
+
+    if ((await card.locator('.transcript .turn').count()) > 0) {
+      await card.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(400);
+      await shot('transcript');
+      break;
+    }
+
+    await toggle.click();
+    await page.waitForTimeout(200);
+  }
+
   await page.getByRole('button', { name: /^Review queue/ }).click();
   await page.waitForTimeout(900);
   await shot('queue');
