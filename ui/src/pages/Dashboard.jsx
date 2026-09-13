@@ -83,7 +83,7 @@ export function Dashboard({ overview, onGo }) {
               {queueSize} question{queueSize === 1 ? '' : 's'} waiting.
             </strong>{' '}
             Somebody asked something your callers are not allowed to answer.
-            Answer it here and the next call to that family delivers it word for
+            Answer it here and the next call to that person delivers it word for
             word.{' '}
             <button className="btn" style={{ marginLeft: 6 }} onClick={() => onGo('queue')}>
               Open the queue
@@ -149,7 +149,7 @@ export function Dashboard({ overview, onGo }) {
               </li>
               <li>
                 <strong>Answers are checked against the recording.</strong> An
-                answer the parent never gave is thrown away, not stored.
+                answer the person never gave is thrown away, not stored.
               </li>
               <li>
                 <strong>A stated intention stays a claim.</strong> "I will pay

@@ -21,8 +21,8 @@ const REGISTER_LABEL = {
 };
 
 const SAMPLE = `id,name,phone,register,consent,do_not_call
-c-1,Parent A,+15550100001,hi-en,yes,no
-c-2,Parent B,+15550100002,en,yes,no`;
+c-1,Contact A,+15550100001,hi-en,yes,no
+c-2,Contact B,+15550100002,en,yes,no`;
 
 export function Contacts({ onChanged }) {
   const [contacts, setContacts] = useState([]);

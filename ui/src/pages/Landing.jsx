@@ -48,18 +48,22 @@ const EDU_USES = [
 ];
 
 const OFFICE_USES = [
-  'Staff attendance, and why somebody has not arrived',
-  'Confirming an appointment or a delivery window',
-  'Chasing a document somebody owes you',
-  'Checking a vendor can still make the date',
-  'A short feedback survey after a job',
+  'Confirming tomorrow’s appointments, one by one',
+  'Asking why somebody has not arrived for a shift',
+  'Reminding a customer about a payment that is due',
+  'Chasing a document or a signature somebody owes you',
+  'Checking a supplier can still make the delivery date',
+  'Following up an enquiry that went quiet weeks ago',
+  'Confirming a delivery or a service window',
+  'A short feedback survey after a job is finished',
   'Telling a list of people one approved thing',
+  'Collecting one answer from every name on a list',
 ];
 
 const BENTO = [
   {
     title: 'It calls in the language they speak',
-    body: 'Hindi, English, or the mix of both people actually use on the phone. It follows the parent rather than insisting on one.',
+    body: 'Hindi, English, or the mix of both people actually use on the phone. It follows whoever picked up rather than insisting on one.',
   },
   {
     title: 'It never improvises',
@@ -67,7 +71,7 @@ const BENTO = [
   },
   {
     title: 'A promise is not a payment',
-    body: '"I will pay tomorrow" is stored as something a parent said, in their words. It never marks a fee paid. Money is taken at your counter or portal.',
+    body: '"I will pay tomorrow" is stored as something the person said, in their own words. It never marks anything paid. Money is taken at your counter or your portal.',
   },
   {
     title: 'It runs on your calendar',
@@ -105,7 +109,7 @@ const FAQ = [
   },
   {
     q: 'What about calls that concern a child?',
-    a: 'The student is not named until whoever answered confirms they are the guardian. Anyone else, and voicemail, hear only that the institute called and would like a call back.',
+    a: 'The child is not named until whoever answered confirms they are the guardian. Anyone else, and voicemail, hear only that your office called and would like a call back.',
   },
   {
     q: 'Can I see what it would say before it says it?',
@@ -206,7 +210,7 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
       <section className="lp-hero" id="top">
         <span className="lp-badge rise">
           <span className="lp-badge-dot" />
-          Specially designed for education hubs
+          For any office that runs on the phone
         </span>
 
         <h1 className="rise" style={{ animationDelay: '0.05s' }}>
@@ -215,8 +219,9 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
 
         <p className="rise" style={{ animationDelay: '0.1s' }}>
           DeskHelp rings people, asks what you need to know, and tells you what
-          each call settled. Built for schools, colleges and coaching
-          institutes, and it works in any office that runs on the phone.
+          each call settled. It does the calling a front desk does all week —
+          reminders, confirmations, chasing what somebody owes you, asking why
+          somebody has not arrived — in the language the person picks up in.
         </p>
 
         <div className="lp-cta rise" style={{ animationDelay: '0.15s' }}>
@@ -274,26 +279,16 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
         <div className="lp-head">
           <h2>What people put it to work on</h2>
           <p>
-            Fourteen education workflows ship ready to switch on. Everything
-            else is the same engine with different questions.
+            The same engine every time. A workflow is a short description of who
+            to call, what may be said to them, and what a useful answer looks
+            like — so the questions change and nothing underneath does.
           </p>
         </div>
         <div className="lp-uses">
           <div className="lp-use">
             <div className="lp-use-head">
-              <h3>Education hubs</h3>
-              <span className="pill accent">ready to switch on</span>
-            </div>
-            <ul>
-              {EDU_USES.map((use) => (
-                <li key={use}>{use}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="lp-use">
-            <div className="lp-use-head">
               <h3>Any office</h3>
-              <span className="pill">write your own</span>
+              <span className="pill accent">the work a front desk does</span>
             </div>
             <ul>
               {OFFICE_USES.map((use) => (
@@ -301,9 +296,25 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
               ))}
             </ul>
             <p className="lp-use-note">
-              A workflow is a short description of who to call, what may be
-              said, and what a useful answer looks like. Nothing under it knows
-              what a student is.
+              Clinics, dealerships, agencies, workshops, service desks. Nothing
+              in the engine knows what a student, an invoice or a delivery is,
+              so a new kind of call is a description you write, not software
+              somebody builds you.
+            </p>
+          </div>
+          <div className="lp-use">
+            <div className="lp-use-head">
+              <h3>Schools and coaching institutes</h3>
+              <span className="pill">fourteen ready to switch on</span>
+            </div>
+            <ul>
+              {EDU_USES.map((use) => (
+                <li key={use}>{use}</li>
+              ))}
+            </ul>
+            <p className="lp-use-note">
+              Written out already, because this is where the calling is
+              heaviest. Switch one on and it runs on the day you pick.
             </p>
           </div>
         </div>
@@ -311,7 +322,7 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
 
       <section className="lp-section" id="what">
         <div className="lp-head">
-          <h2>Built for calls that reach real families</h2>
+          <h2>Built for calls that reach real people</h2>
           <p>Rules in the code, not settings somebody can leave off.</p>
         </div>
         <div className="lp-bento">

@@ -12,9 +12,9 @@ import { Logo } from '../Logo.jsx';
 import { LoginScene } from '../LoginScene.jsx';
 
 const POINTS = [
-  'Fee reminders, absence calls, admission follow-ups and ten more, each one you switch on yourself.',
+  'Appointment confirmations, payment reminders, document chases and eleven more, each one you switch on yourself.',
   'Calls happen in Hindi, English, or the mix of both that people actually speak.',
-  'Every answer is checked against what the parent really said, so nothing gets written down that they never told you.',
+  'Every answer is checked against what the person really said, so nothing gets written down that they never told you.',
 ];
 
 export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
@@ -131,7 +131,7 @@ export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
                 DeskHelp<span className="wordmark-dot on-dark">.ai</span>
               </div>
               <div className="on-dark-sub">
-                specially designed for education hubs
+                for any office that runs on the phone
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
             </h2>
             <p className="auth-sub">
               {mode === 'signup'
-                ? 'This first account belongs to your institute.'
+                ? 'This first account belongs to your office.'
                 : 'Welcome back.'}
             </p>
 
@@ -177,7 +177,7 @@ export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
             <form onSubmit={submit}>
               {mode === 'signup' ? (
                 <label className="field">
-                  <span>Institute name</span>
+                  <span>Your organisation’s name</span>
                   <input
                     type="text"
                     required
@@ -236,9 +236,9 @@ export function Login({ needsSetup, googleClientId, demo, onSignedIn }) {
                   Take a look around the demo
                 </button>
                 <p className="demo-note">
-                  A shared workspace with made-up families and made-up numbers.
-                  It cannot call anybody. Whatever you type there is visible to
-                  the next person who opens it.
+                  A shared workspace with made-up contacts and made-up numbers.
+                  Whatever you type there is visible to the next person who
+                  opens it.
                 </p>
               </>
             ) : null}
