@@ -34,12 +34,42 @@ export interface TranscriptTurn {
   readonly text: string;
 }
 
+/** One dialling attempt CALL-E made for a recipient. */
+export interface CalleAttempt {
+  readonly id?: string;
+  readonly status?: string;
+  readonly started_at?: string;
+  readonly transcript_turns?: readonly TranscriptTurn[];
+}
+
 /** The shape DeskHelp reads back from CALL-E for a single recipient. */
 export interface CalleRecipientResult {
   readonly status: string;
   readonly structured_result?: Record<string, unknown> | null;
   readonly transcript_turns?: readonly TranscriptTurn[];
+  readonly attempts?: readonly CalleAttempt[];
   readonly completion_confidence?: { score?: number; label?: string } | null;
+}
+
+/**
+ * The words the recipient actually spoke, wherever CALL-E filed them.
+ *
+ * CALL-E reports turns per attempt, at
+ * `recipients[].attempts[].transcript_turns`, not on the recipient. Reading
+ * the recipient level found nothing, so every answer that needed evidence was
+ * discarded for want of anything to check it against and every call landed on
+ * a person. Failing closed was right; failing closed on all of them was a bug.
+ *
+ * The last attempt is the call being judged. If it reports no turns, that is
+ * an answer in itself and grounding should fail, so an older attempt's words
+ * are never borrowed to support it.
+ */
+export function transcriptTurnsOf(
+  result: CalleRecipientResult,
+): readonly TranscriptTurn[] {
+  const latest = (result.attempts ?? []).at(-1);
+  if (latest?.transcript_turns) return latest.transcript_turns;
+  return result.transcript_turns ?? [];
 }
 
 export interface Judgement {
@@ -200,7 +230,7 @@ export function judge(args: {
   const unansweredQuestions: UnansweredQuestion[] = [];
   const discarded: { questionId: string; reported: string; reason: string }[] = [];
 
-  const turns = result.transcript_turns ?? [];
+  const turns = transcriptTurnsOf(result);
   const structured = result.structured_result ?? {};
 
   // 1. Did the call even get there? A non-terminal or failed status cannot be

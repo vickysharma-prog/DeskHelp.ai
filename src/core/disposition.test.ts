@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { judge } from './disposition.ts';
+import { judge, transcriptTurnsOf } from './disposition.ts';
 import type { CalleRecipientResult, TranscriptTurn } from './disposition.ts';
 import type { ActionDefinition } from './types.ts';
 
@@ -344,4 +344,41 @@ test('a missing structured result does not become a negative answer', () => {
 
   assert.notEqual(judgement.disposition, 'answered');
   assert.equal(judgement.answers.will_pay, 'unknown');
+});
+
+test('turns are read from the attempt, which is where CALL-E files them', () => {
+  // Found on the first real call. CALL-E reports turns at
+  // recipients[].attempts[].transcript_turns, and this read them one level up
+  // where nothing was. Grounding then had nothing to check against, so every
+  // evidenced answer was discarded and every call went to a person. The
+  // fixtures used the flat shape, so the suite was green throughout.
+  const spoken = [
+    { offset_seconds: 0, speaker: 'bot', text: 'Kya aapko due date ke baare mein pata hai?' },
+    { offset_seconds: 6, speaker: 'user', text: 'Haan ji pata hai mere ko.' },
+  ];
+
+  assert.equal(
+    transcriptTurnsOf({ status: 'completed', attempts: [{ transcript_turns: spoken }] }).length,
+    2,
+    'the attempt is where the words are',
+  );
+
+  // The flat shape still works, because fixtures and older responses use it.
+  assert.equal(
+    transcriptTurnsOf({ status: 'completed', transcript_turns: spoken }).length,
+    2,
+  );
+
+  // A later attempt with no turns must not borrow the earlier one's words.
+  // Those were spoken on a different call to the same person.
+  assert.equal(
+    transcriptTurnsOf({
+      status: 'completed',
+      attempts: [{ transcript_turns: spoken }, { transcript_turns: [] }],
+    }).length,
+    0,
+    'an attempt that reports no turns has none, and grounding must fail closed',
+  );
+
+  assert.equal(transcriptTurnsOf({ status: 'completed' }).length, 0);
 });
