@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/node-%E2%89%A522.5-111111?style=flat-square" alt="Node 22.5 or later">
-  <img src="https://img.shields.io/badge/tests-173%20passing-111111?style=flat-square" alt="173 tests">
+  <img src="https://img.shields.io/badge/tests-174%20passing-111111?style=flat-square" alt="174 tests">
   <img src="https://img.shields.io/badge/runtime%20deps-0-111111?style=flat-square" alt="No runtime dependencies">
   <img src="https://img.shields.io/badge/calls-dry%20run%20by%20default-111111?style=flat-square" alt="Dry run by default">
 </p>
@@ -286,7 +286,7 @@ commit, and everything printed masks it.
 ## Tests
 
 ```bash
-npm run check     # typecheck and 173 tests
+npm run check     # typecheck and 174 tests
 ```
 
 Weighted towards the refusals rather than the happy path: unusable timezones,

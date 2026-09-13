@@ -24,7 +24,7 @@ Phase: **built, deployed, proven on real calls, video published. The pull reques
 ## Done
 
 - Engine, 14 workflows, scheduler, contact import, review queue, call-to-call
-  memory. **173 tests** and a typecheck, all green.
+  memory. **174 tests** and a typecheck, all green.
 - Accounts, sessions, the web interface, a landing page, and a seeded demo of
   124 families with questions waiting in the queue.
 - **Calls are placed from the product.** A `Call now` button on each workflow,
@@ -35,6 +35,8 @@ Phase: **built, deployed, proven on real calls, video published. The pull reques
 - Adding one contact by hand, without writing a CSV.
 - Repository public under MIT, README with screenshots, CONTRIBUTING.
 - Deployed on Render from `render.yaml`. Every push to `main` redeploys.
+- **Submitted**: <https://github.com/CALLE-AI/awesome-phone-call-agents/pull/539>,
+  three files and no code, validator green.
 - The public deployment still cannot dial: `DESKHELP_LIVE` is false there and
   the allow list is empty. Verified after every deploy.
 
@@ -61,11 +63,8 @@ Free workflow and contact pairs, as of the last session: everything except
 
 ## Not done
 
-1. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
-   each in `apps/README.md` and the CALL-E repo's root `README.md`. No code
-   goes in it: it is a catalogue pointer to this repository.
-2. **The Devpost form**, and the feedback survey, which is a separate prize.
-3. **A shorter cut of the video.** The published one runs 7:29. The rules say
+1. **The Devpost form**, and the feedback survey, which is a separate prize.
+2. **A shorter cut of the video.** The published one runs 7:29. The rules say
    it "should be less than three (3) minutes" and that "judges are not required
    to watch beyond three", and the first real call starts at 2:55. Not a
    disqualification, but everything that proves the product sits past the mark
@@ -97,7 +96,7 @@ Two things to get right in the take:
 
 ## Standing reminders
 
-- **20 CALL-E calls, 11 spent, 9 left.**
+- **20 CALL-E calls, 12 spent, 8 left.**
 - **CALL-E's shared number pool does not reach India.** The account now owns
   `+1 208-428-4381` as its default outbound number, $2.00/month, identity
   verified. That is what made calling work. Their announcement of 6 and 7 Sept

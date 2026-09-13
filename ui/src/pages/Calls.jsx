@@ -85,6 +85,17 @@ function CallRow({ call, open, onToggle }) {
         <div className="card-body stack">
           <div className="muted" style={{ fontSize: 12.5 }}>
             {shown.detail}
+            {call.providerConfidence?.label ? (
+              <>
+                {' '}CALL-E rated its own reading of this call{' '}
+                <strong>{call.providerConfidence.label}</strong>
+                {typeof call.providerConfidence.score === 'number'
+                  ? ` (${call.providerConfidence.score})`
+                  : ''}
+                . That is its confidence in the extraction, not evidence that
+                anybody said the thing, so it never decides the outcome above.
+              </>
+            ) : null}
           </div>
 
           <Transcript turns={call.transcript ?? []} />

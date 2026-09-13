@@ -299,6 +299,9 @@ export async function runAction(options: RunOptions): Promise<RunResult> {
         claims: judgement.claims,
         unansweredQuestions: judgement.unansweredQuestions,
         transcript: transcriptTurnsOf(recipientResult),
+        ...(judgement.providerConfidence
+          ? { providerConfidence: judgement.providerConfidence }
+          : {}),
       });
     }
 

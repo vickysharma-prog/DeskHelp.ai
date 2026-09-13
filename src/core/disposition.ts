@@ -149,6 +149,14 @@ export interface Judgement {
    * of what the agent said around them.
    */
   readonly spokenFindings: readonly SpokenFinding[];
+  /**
+   * How sure CALL-E was that it completed the task, kept beside DeskHelp's own
+   * reading rather than in place of it. A provider's confidence is a statement
+   * about its extraction, not about whether the recipient said the thing, so it
+   * never decides a disposition. It is worth showing to whoever reads the call:
+   * a high score next to a discarded answer is a useful thing to notice.
+   */
+  readonly providerConfidence?: { readonly score?: number; readonly label?: string };
 }
 
 /** Speaker labels that mean "the machine". */
@@ -373,6 +381,9 @@ export function judge(args: {
       discarded: [],
       // Nothing was said, so there is nothing of the agent's to audit.
       spokenFindings: [],
+      ...(result.completion_confidence
+        ? { providerConfidence: result.completion_confidence }
+        : {}),
     };
   }
 
@@ -540,5 +551,8 @@ export function judge(args: {
     optOutRequested,
     discarded,
     spokenFindings,
+    ...(result.completion_confidence
+      ? { providerConfidence: result.completion_confidence }
+      : {}),
   };
 }

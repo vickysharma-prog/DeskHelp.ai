@@ -204,7 +204,7 @@ python scripts/create_branch.py <type>/<short-kebab-summary>
 ```bash
 npm run demo       # end-to-end, fixtures only, no network, no credentials
 npm run preview    # render a call plan and exit without dialling
-npm run check      # typecheck and 173 tests. `npm test` alone misses type errors
+npm run check      # typecheck and 174 tests. `npm test` alone misses type errors
 npm start          # the product, at http://127.0.0.1:4321
 
 npm run live -- --action fee-reminder                        # shows the words, dials nobody

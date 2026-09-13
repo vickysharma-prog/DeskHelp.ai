@@ -547,3 +547,51 @@ test('a null offset does not become a claim nobody can find', () => {
   assert.equal(judgement.claims.length, 1);
   assert.equal(judgement.claims[0]!.offsetSeconds, 0);
 });
+
+test("CALL-E's own confidence is carried, and decides nothing", () => {
+  // Worth showing beside the verdict: a high score next to a discarded answer
+  // is a useful thing for an operator to notice. It is a statement about the
+  // provider's extraction, not about whether the recipient said the thing, so
+  // it must never move a disposition.
+  const withConfidence = (score: number, label: string) =>
+    judgeWith({
+      status: 'completed',
+      completion_confidence: { score, label },
+      transcript_turns: turns(
+        ['bot', 'Will you pay before Friday?', 0],
+        ['user', 'Hmm.', 4],
+      ),
+      structured_result: {
+        identity_confirmed: 'yes',
+        opt_out_requested: 'no',
+        unanswered_questions: [],
+        will_pay: 'yes',
+        evidence_quotes: { will_pay: 'yes I will pay before Friday' },
+      },
+    });
+
+  const sure = withConfidence(0.99, 'high');
+  assert.equal(sure.providerConfidence?.label, 'high');
+  assert.equal(sure.providerConfidence?.score, 0.99);
+
+  // Near-certain, and still discarded, because the recipient said "Hmm."
+  assert.equal(sure.disposition, 'needs-human');
+  assert.equal(sure.answers.will_pay, 'unknown');
+  assert.equal(sure.discarded.length, 1);
+
+  // And a low score changes nothing about a call that was properly grounded.
+  const shaky = judgeWith({
+    status: 'completed',
+    completion_confidence: { score: 0.1, label: 'low' },
+    transcript_turns: turns(['user', 'Haan ji main portal pe kal kar dunga.', 5]),
+    structured_result: {
+      identity_confirmed: 'yes',
+      opt_out_requested: 'no',
+      unanswered_questions: [],
+      will_pay: 'yes',
+      evidence_quotes: { will_pay: 'main portal pe kal kar dunga' },
+    },
+  });
+  assert.equal(shaky.disposition, 'answered');
+  assert.equal(shaky.providerConfidence?.label, 'low');
+});
