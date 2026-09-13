@@ -68,6 +68,7 @@ async function main(): Promise<void> {
       register: { type: 'string', default: 'hi-en' },
       name: { type: 'string', default: 'Test Recipient' },
       confirm: { type: 'boolean', default: false },
+      digits: { type: 'string' },
     },
     allowPositionals: true,
   });
@@ -163,11 +164,26 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const ask = createInterface({ input: process.stdin, output: process.stdout });
-  const answer = await ask.question(
-    `\nThis will ring ${maskPhone(phone)} for real. Type the last 4 digits to go ahead: `,
-  );
-  ask.close();
+  // The check is that you know the last four digits, not that a terminal was
+  // attached. Asking on a pipe hangs forever and then dies claiming an
+  // unsettled await, which reads like a crash rather than a missing answer.
+  let answer: string;
+  if (values.digits !== undefined) {
+    answer = values.digits;
+  } else if (process.stdin.isTTY) {
+    const ask = createInterface({ input: process.stdin, output: process.stdout });
+    answer = await ask.question(
+      `\nThis will ring ${maskPhone(phone)} for real. Type the last 4 digits to go ahead: `,
+    );
+    ask.close();
+  } else {
+    console.error(
+      '\nThere is no terminal here to ask on. Pass the last four digits of the\n' +
+        'number instead:\n\n' +
+        `  npm run live -- --action ${values.action} --confirm --digits NNNN\n`,
+    );
+    process.exit(1);
+  }
 
   if (answer.trim() !== phone.slice(-4)) {
     console.error('\nThat did not match. Nothing was dialled.\n');
