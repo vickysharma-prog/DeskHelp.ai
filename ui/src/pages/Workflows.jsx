@@ -186,6 +186,123 @@ function groupOutcomes(outcomes) {
   return [...groups.values()].sort((a, b) => b.count - a.count);
 }
 
+/**
+ * Choosing who to ring, and saying so plainly before it happens.
+ *
+ * One person per press. A button that fans a workflow out across every family
+ * on the list is not something an office should be able to lean on by
+ * accident, and "who is about to be called" is the one thing worth being sure
+ * of, so the name and the number are on the button itself.
+ */
+function CallPanel({ workflow, onClose, onPlaced }) {
+  const [contacts, setContacts] = useState([]);
+  const [chosen, setChosen] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState('');
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    api.contacts().then(setContacts).catch((error) => setProblem(error.message));
+  }, []);
+
+  const contact = contacts.find((entry) => entry.id === chosen);
+
+  const place = async () => {
+    setBusy(true);
+    setProblem('');
+    try {
+      setResult(await api.callNow(workflow.id, chosen));
+      onPlaced?.();
+    } catch (error) {
+      setProblem(error.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const outcome = result?.outcomes?.[0];
+
+  return (
+    <div className="backdrop" onClick={onClose}>
+      <div className="modal" onClick={(event) => event.stopPropagation()}>
+        <div className="modal-head">
+          <div>
+            <h2>{workflow.title}</h2>
+            <div className="muted" style={{ fontSize: 12.5 }}>
+              One call, to one person, now.
+            </div>
+          </div>
+          <button className="btn" onClick={onClose}>
+            Close
+          </button>
+        </div>
+
+        <div className="modal-body stack">
+          {problem ? <div className="notice bad">{problem}</div> : null}
+
+          {outcome ? (
+            <>
+              <div className={`notice ${outcome.status === 'placed' ? 'good' : ''}`}>
+                {outcome.status === 'placed'
+                  ? 'The call was placed and has finished.'
+                  : outcome.status === 'simulated'
+                    ? 'Nothing was dialled: live calling is off, or this number is not on the allow list.'
+                    : outcome.detail}
+              </div>
+
+              {outcome.judgement ? (
+                <div className="stack">
+                  <div>
+                    <strong>{describeDisposition(outcome.judgement.disposition).label}</strong>
+                    <div className="muted" style={{ fontSize: 12.5 }}>
+                      {describeDisposition(outcome.judgement.disposition).detail}
+                    </div>
+                  </div>
+                  <div className="muted" style={{ fontSize: 12.5 }}>
+                    Open Calls to read what was said.
+                  </div>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <label className="field">
+                <span>Who should be called?</span>
+                <select value={chosen} onChange={(event) => setChosen(event.target.value)}>
+                  <option value="">Choose somebody</option>
+                  {contacts.map((entry) => (
+                    <option key={entry.id} value={entry.id}>
+                      {entry.fullName} · {entry.phone}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="muted" style={{ fontSize: 12.5 }}>
+                A phone only rings if live calling is on and this number is on
+                the allow list in Settings. Otherwise the whole run happens
+                exactly as it would, and dials nobody.
+              </div>
+
+              <button
+                className="btn primary"
+                disabled={!chosen || busy}
+                onClick={place}
+              >
+                {busy
+                  ? 'Calling, this takes about a minute'
+                  : contact
+                    ? `Call ${contact.fullName} on ${contact.phone}`
+                    : 'Call now'}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PreviewPanel({ title, result, onClose }) {
   const first = result.outcomes.find((outcome) => outcome.taskText);
 
@@ -263,6 +380,7 @@ export function Workflows({ onChanged }) {
   const [workflows, setWorkflows] = useState([]);
   const [editing, setEditing] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [calling, setCalling] = useState(null);
   const [busy, setBusy] = useState('');
   const [problem, setProblem] = useState('');
 
@@ -391,6 +509,9 @@ export function Workflows({ onChanged }) {
                   >
                     {busy === workflow.id ? 'Running' : 'Dry run'}
                   </button>
+                  <button className="btn" onClick={() => setCalling(workflow)}>
+                    Call now
+                  </button>
                 </div>
 
                 {isEditing ? (
@@ -406,6 +527,14 @@ export function Workflows({ onChanged }) {
           );
         })}
       </div>
+
+      {calling ? (
+        <CallPanel
+          workflow={calling}
+          onClose={() => setCalling(null)}
+          onPlaced={() => onChanged?.()}
+        />
+      ) : null}
 
       {preview ? (
         <PreviewPanel

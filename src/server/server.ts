@@ -15,6 +15,7 @@
  */
 
 import { createServer } from 'node:http';
+import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 
@@ -27,6 +28,7 @@ import { runAction } from '../core/runner.ts';
 import { importContacts } from '../core/import.ts';
 import { describe, nextRuns, periodKeyFor } from '../core/schedule.ts';
 import { EDUCATION_PACK, actionById } from '../packs/education/actions.ts';
+import type { SpokenRegister } from '../core/types.ts';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Schedule } from '../core/schedule.ts';
 import type { Institute } from '../core/types.ts';
@@ -248,9 +250,122 @@ export function createDeskHelpServer(options: ServerOptions) {
       json(res, 200, result);
     },
 
+    /**
+     * Places one real call, to one named person, now.
+     *
+     * Deliberately not the preview endpoint without `preview`. That one runs
+     * across every contact, and a button labelled "Call now" that fans out
+     * over the whole list is not something anybody should be able to press by
+     * accident. One press, one phone.
+     *
+     * Whether it actually rings is still the gate's decision, not this
+     * endpoint's: the public demo has live calling off and an empty allow
+     * list, so the same button there walks the same path and dials nobody.
+     */
+    'POST /api/workflows/call': async (req, res, url) => {
+      const actionId = url.searchParams.get('id') ?? '';
+      const action = actionById(actionId);
+      if (!action) return json(res, 404, { error: 'Unknown workflow.' });
+
+      const body = JSON.parse(await readBody(req)) as { contactId?: string };
+      const contact = store
+        .contacts()
+        .find((entry) => entry.id === body.contactId);
+      if (!contact) return json(res, 404, { error: 'Unknown contact.' });
+
+      const config = institute();
+      const factSheet = store.currentFactSheet(config.id);
+      if (!factSheet) {
+        return json(res, 400, {
+          error:
+            'Publish a fact sheet first: the agent has nothing it is allowed to say.',
+        });
+      }
+
+      const now = new Date();
+      const result = await runAction({
+        action,
+        institute: config,
+        factSheet,
+        contacts: [contact],
+        periodKey: periodKeyFor(
+          store.getActionConfig(actionId).schedule,
+          now,
+          config.timezone,
+        ),
+        ledger,
+        transport: transportFor(contact.phone),
+        env,
+        now,
+      });
+
+      json(res, 200, result);
+    },
+
     // --- contacts ---------------------------------------------------------
     'GET /api/contacts': async (_req, res) => {
       json(res, 200, store.contacts());
+    },
+
+    // --- calls ------------------------------------------------------------
+    'GET /api/calls': async (_req, res) => {
+      const config = institute();
+      const names = new Map(
+        store.contacts().map((contact) => [contact.id, contact.fullName]),
+      );
+      const titles = new Map(
+        EDUCATION_PACK.map((action) => [action.id, action.title]),
+      );
+
+      json(
+        res,
+        200,
+        ledger.recentCalls(config.id).map((call) => ({
+          ...call,
+          // A call placed from the command line has no contact row behind it,
+          // and that call is the one somebody most wants to see. Falling back
+          // to the id keeps it on the page instead of dropping it.
+          contactName: names.get(call.contactId) ?? call.contactId,
+          actionTitle: titles.get(call.actionId) ?? call.actionId,
+        })),
+      );
+    },
+
+    'POST /api/contacts': async (req, res) => {
+      const body = JSON.parse(await readBody(req)) as {
+        fullName?: string;
+        phone?: string;
+        preferredRegister?: string;
+      };
+
+      const fullName = (body.fullName ?? '').trim();
+      const phone = (body.phone ?? '').trim();
+
+      if (!fullName) return json(res, 400, { error: 'Give the person a name.' });
+      if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+        return json(res, 400, {
+          error:
+            'The number must be in full international form, starting with + and the country code.',
+        });
+      }
+      if (store.contactByPhone(phone)) {
+        return json(res, 400, { error: 'That number is already on the list.' });
+      }
+
+      const contact = {
+        id: `c-${randomUUID().slice(0, 8)}`,
+        fullName,
+        phone,
+        preferredRegister: (body.preferredRegister ?? 'hi-en') as SpokenRegister,
+        // Added by hand, one at a time, by somebody who knows this person
+        // agreed to be called. The CSV path asks for consent as a column
+        // because a spreadsheet carries no such knowledge.
+        consent: true,
+        doNotCall: false,
+      };
+
+      store.saveContact(contact);
+      json(res, 200, contact);
     },
 
     'POST /api/contacts/import': async (req, res) => {

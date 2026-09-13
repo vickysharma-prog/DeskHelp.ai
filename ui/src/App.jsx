@@ -9,11 +9,13 @@ import { Workflows } from './pages/Workflows.jsx';
 import { Contacts } from './pages/Contacts.jsx';
 import { FactSheet } from './pages/FactSheet.jsx';
 import { Queue } from './pages/Queue.jsx';
+import { Calls } from './pages/Calls.jsx';
 import { Settings } from './pages/Settings.jsx';
 
 const PAGES = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'workflows', label: 'Workflows' },
+  { id: 'calls', label: 'Calls' },
   { id: 'queue', label: 'Review queue' },
   { id: 'contacts', label: 'Contacts' },
   { id: 'factsheet', label: 'What we may say' },
@@ -141,6 +143,7 @@ export function App() {
 
         {page === 'dashboard' && <Dashboard overview={overview} onGo={setPage} />}
         {page === 'workflows' && <Workflows onChanged={refresh} />}
+        {page === 'calls' && <Calls />}
         {page === 'queue' && <Queue onChanged={refresh} />}
         {page === 'contacts' && <Contacts onChanged={refresh} />}
         {page === 'factsheet' && <FactSheet onChanged={refresh} />}

@@ -28,6 +28,8 @@ export function Contacts({ onChanged }) {
   const [contacts, setContacts] = useState([]);
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [adding, setAdding] = useState({ fullName: '', phone: '' });
+  const [addProblem, setAddProblem] = useState('');
   const fileInput = useRef(null);
 
   const load = async () => setContacts(await api.contacts());
@@ -49,6 +51,22 @@ export function Contacts({ onChanged }) {
     }
   };
 
+  const addOne = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    setAddProblem('');
+    try {
+      await api.addContact(adding);
+      setAdding({ fullName: '', phone: '' });
+      await load();
+      onChanged?.();
+    } catch (error) {
+      setAddProblem(error.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <>
       <header className="page-head">
@@ -63,6 +81,51 @@ export function Contacts({ onChanged }) {
       </header>
 
       <div className="stack">
+        {/*
+          Importing a spreadsheet is how a term's intake arrives. This is how
+          the one person you actually want to ring arrives, which otherwise
+          meant writing a CSV by hand to add a single row.
+        */}
+        <div className="card">
+          <div className="card-head">
+            <h2>Add one person</h2>
+            <span className="muted" style={{ fontSize: 12 }}>
+              keeps the current list
+            </span>
+          </div>
+          <div className="card-body">
+            <form className="row" style={{ gap: 10, alignItems: 'flex-end' }} onSubmit={addOne}>
+              <label className="field" style={{ marginBottom: 0, flex: 2 }}>
+                <span>Name</span>
+                <input
+                  value={adding.fullName}
+                  placeholder="R. Sharma"
+                  onChange={(event) =>
+                    setAdding({ ...adding, fullName: event.target.value })
+                  }
+                />
+              </label>
+              <label className="field" style={{ marginBottom: 0, flex: 2 }}>
+                <span>Phone</span>
+                <input
+                  value={adding.phone}
+                  placeholder="+919876543210"
+                  onChange={(event) => setAdding({ ...adding, phone: event.target.value })}
+                />
+                <small>Full international form, country code and all.</small>
+              </label>
+              <button className="btn primary" disabled={busy} type="submit">
+                Add
+              </button>
+            </form>
+            {addProblem ? (
+              <div className="notice bad" style={{ marginTop: 10 }}>
+                {addProblem}
+              </div>
+            ) : null}
+          </div>
+        </div>
+
         <div className="card">
           <div className="card-head">
             <h2>Import a CSV</h2>

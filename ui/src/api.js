@@ -36,8 +36,17 @@ export const api = {
     }),
   preview: (id) =>
     request(`/api/workflows/preview?id=${encodeURIComponent(id)}`, { method: 'POST' }),
+  callNow: (id, contactId) =>
+    request(`/api/workflows/call?id=${encodeURIComponent(id)}`, {
+      method: 'POST',
+      body: JSON.stringify({ contactId }),
+    }),
+
+  calls: () => request('/api/calls'),
 
   contacts: () => request('/api/contacts'),
+  addContact: (contact) =>
+    request('/api/contacts', { method: 'POST', body: JSON.stringify(contact) }),
   importContacts: (csv) =>
     fetch('/api/contacts/import', {
       method: 'POST',

@@ -17,7 +17,7 @@
 
 import { guard } from './guard.ts';
 import { renderCall } from './render.ts';
-import { judge } from './disposition.ts';
+import { judge, transcriptTurnsOf } from './disposition.ts';
 import { decideRetry, calleKeyFor } from './retry.ts';
 import {
   localeFor,
@@ -298,6 +298,7 @@ export async function runAction(options: RunOptions): Promise<RunResult> {
         answers: judgement.answers,
         claims: judgement.claims,
         unansweredQuestions: judgement.unansweredQuestions,
+        transcript: transcriptTurnsOf(recipientResult),
       });
     }
 

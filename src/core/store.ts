@@ -197,6 +197,42 @@ export class Store {
     }
   }
 
+  /**
+   * Adds or updates one contact, leaving the rest of the list alone.
+   *
+   * Importing a spreadsheet is how a term's intake arrives. This is how the
+   * one person you actually want to ring right now arrives, which otherwise
+   * meant writing a CSV by hand to add a single row.
+   */
+  saveContact(contact: Contact): void {
+    this.#db
+      .prepare(
+        `INSERT INTO contact (id, full_name, phone, register, consent, do_not_call, ward_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           full_name = excluded.full_name,
+           phone = excluded.phone,
+           register = excluded.register,
+           consent = excluded.consent,
+           do_not_call = excluded.do_not_call,
+           ward_id = excluded.ward_id`,
+      )
+      .run(
+        contact.id,
+        contact.fullName,
+        contact.phone,
+        contact.preferredRegister,
+        contact.consent ? 1 : 0,
+        contact.doNotCall ? 1 : 0,
+        contact.wardId ?? null,
+      );
+  }
+
+  /** The contact holding this number, if the institute has one. */
+  contactByPhone(phone: string): Contact | undefined {
+    return this.contacts().find((contact) => contact.phone === phone);
+  }
+
   contacts(): Contact[] {
     const rows = this.#db
       .prepare('SELECT * FROM contact ORDER BY full_name')

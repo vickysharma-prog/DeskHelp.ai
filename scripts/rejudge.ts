@@ -117,11 +117,16 @@ async function main(): Promise<void> {
   }
 
   db.prepare(
-    'UPDATE call_outcome SET disposition = ?, answers_json = ?, claims_json = ? WHERE idempotency_key = ?',
+    `UPDATE call_outcome
+        SET disposition = ?, answers_json = ?, claims_json = ?,
+            transcript_json = ?, calle_call_id = ?
+      WHERE idempotency_key = ?`,
   ).run(
     verdict.disposition,
     JSON.stringify(verdict.answers),
     JSON.stringify(verdict.claims),
+    JSON.stringify(transcriptTurnsOf(recipient)),
+    values.call,
     row.idempotency_key!,
   );
 
