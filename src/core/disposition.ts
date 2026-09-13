@@ -29,7 +29,8 @@ import type {
 
 /** One turn of the conversation, as CALL-E reports it. */
 export interface TranscriptTurn {
-  readonly offset_seconds: number;
+  /** Null on some turns CALL-E returns, so every reader has to cope with it. */
+  readonly offset_seconds: number | null;
   readonly speaker: string;
   readonly text: string;
 }
@@ -57,14 +58,6 @@ export interface CalleRecipientResult {
 }
 
 /**
- * Everything CALL-E said about why a call did not happen, in one string.
- *
- * It arrives in three places — on the call, on the recipient, and on the
- * attempt — and which one carries the useful sentence varies. Reading only the
- * recipient found nothing, which is how a call nobody answered was filed as
- * one a person must look at.
- */
-/**
  * Whether the phone rang at all.
  *
  * CALL-E's own documentation says the Calls API "does not guarantee a distinct
@@ -91,6 +84,14 @@ function ringTimeOf(result: CalleRecipientResult): RingTime {
   return elapsed <= 0 ? 'none' : 'some';
 }
 
+/**
+ * Everything CALL-E said about why a call did not happen, in one string.
+ *
+ * It arrives in three places — on the call, on the recipient, and on the
+ * attempt — and which one carries the useful sentence varies. Reading only the
+ * recipient found nothing, which is how a call nobody answered was filed as
+ * one a person must look at.
+ */
 function failureTextOf(result: CalleRecipientResult): string {
   const latest = (result.attempts ?? []).at(-1);
   return [
@@ -150,15 +151,36 @@ export interface Judgement {
   readonly spokenFindings: readonly SpokenFinding[];
 }
 
-/**
- * Speaker labels that mean "the machine". Everything else is treated as the
- * far end, because mislabelling the agent as the recipient would let the
- * agent's own words count as evidence — the exact failure this guards against.
- */
+/** Speaker labels that mean "the machine". */
 const AGENT_SPEAKERS = new Set(['bot', 'agent', 'assistant', 'system', 'ai']);
 
+/**
+ * Labels that positively identify the far end of the call.
+ *
+ * Membership is required, rather than merely not being the agent. CALL-E has a
+ * third label, `unknown`, and the turns it carries on a real call were the
+ * agent's own words: "Wapas apne sawaal par aate hain — aap sochte hain ki
+ * payment kab tak ho jayegi?" Anything-but-the-agent would have filed those as
+ * the recipient's, and an agent's own question is then available to ground the
+ * answer to itself. That is the exact hole the grounding check exists to
+ * close, handed to us by the provider rather than invented by the model.
+ *
+ * A label nobody recognises is therefore evidence of nothing. The cost is that
+ * an unrecognised transcript grounds no answers and the call goes to a person,
+ * which is the right way for this to fail.
+ */
+const RECIPIENT_SPEAKERS = new Set([
+  'user',
+  'customer',
+  'callee',
+  'recipient',
+  'human',
+  'person',
+  'contact',
+]);
+
 function isRecipientTurn(turn: TranscriptTurn): boolean {
-  return !AGENT_SPEAKERS.has(turn.speaker.trim().toLowerCase());
+  return RECIPIENT_SPEAKERS.has(turn.speaker.trim().toLowerCase());
 }
 
 /**
@@ -457,7 +479,9 @@ export function judge(args: {
           questionId: question.id,
           statedValue: reported,
           quote,
-          offsetSeconds: turn.offset_seconds,
+          // CALL-E returns a null offset on some turns, and a Claim carrying
+          // null is a Claim nobody can find in the recording.
+          offsetSeconds: turn.offset_seconds ?? 0,
           confirmed: false,
         });
       }

@@ -1325,3 +1325,15 @@ button.brand {
 button.brand:hover {
   background: rgba(0, 0, 0, 0.035);
 }
+
+/* A turn the provider could not attribute. Neither side of the conversation,
+   and shown as neither, because guessing would put words in somebody's mouth
+   on the one screen whose whole job is to say who said what. */
+.transcript .turn.unattributed {
+  align-self: center;
+  max-width: 92%;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-style: italic;
+}

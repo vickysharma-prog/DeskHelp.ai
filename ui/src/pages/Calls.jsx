@@ -39,16 +39,19 @@ function Transcript({ turns }) {
   return (
     <div className="transcript">
       {turns.map((turn, index) => {
-        const isAgent = ['bot', 'agent', 'assistant', 'system', 'ai'].includes(
-          String(turn.speaker).toLowerCase(),
-        );
+        // Three kinds of turn, not two. CALL-E also returns `unknown`, and on
+        // a real call those carried the agent's own words. Showing them as the
+        // family's would put words in somebody's mouth on the one screen whose
+        // job is to say exactly who said what.
+        const speaker = String(turn.speaker ?? '').toLowerCase();
+        const isAgent = ['bot', 'agent', 'assistant', 'system', 'ai'].includes(speaker);
+        const isPerson = ['user', 'customer', 'callee', 'recipient', 'human', 'person', 'contact']
+          .includes(speaker);
+        const side = isAgent ? 'agent' : isPerson ? 'person' : 'unattributed';
         return (
-          <div
-            key={`${turn.offset_seconds}-${index}`}
-            className={`turn ${isAgent ? 'agent' : 'person'}`}
-          >
+          <div key={`${turn.offset_seconds ?? index}-${index}`} className={`turn ${side}`}>
             <div className="turn-who">
-              {isAgent ? 'DeskHelp' : 'Them'}
+              {isAgent ? 'DeskHelp' : isPerson ? 'Them' : 'Unattributed'}
               <span className="turn-at">{clock(turn.offset_seconds)}</span>
             </div>
             <div className="turn-text">{turn.text}</div>

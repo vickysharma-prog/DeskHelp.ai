@@ -123,7 +123,7 @@ export function auditAgentSpeech(args: {
         kind: 'unsourced-number',
         token,
         quote: turn.text,
-        offsetSeconds: turn.offset_seconds,
+        offsetSeconds: turn.offset_seconds ?? 0,
       });
     }
 
@@ -133,7 +133,7 @@ export function auditAgentSpeech(args: {
           kind: 'prohibited-commitment',
           token: phrase,
           quote: turn.text,
-          offsetSeconds: turn.offset_seconds,
+          offsetSeconds: turn.offset_seconds ?? 0,
         });
       }
     }

@@ -496,3 +496,54 @@ test('a phone that never rang is not a phone nobody answered', () => {
     'declined',
   );
 });
+
+test("a turn the provider could not attribute is nobody's evidence", () => {
+  // Found on a real call. CALL-E returns a third speaker label, `unknown`, and
+  // the turns it carried were the agent's own words: "Wapas apne sawaal par
+  // aate hain — aap sochte hain ki payment kab tak ho jayegi?"
+  //
+  // The old rule was anything-but-the-agent, so those were filed as the
+  // recipient's and the agent's own question became available to ground the
+  // answer to itself. That is the exact hole this check exists to close,
+  // handed over by the provider rather than invented by the model.
+  const judgement = judgeWith({
+    status: 'completed',
+    transcript_turns: turns(
+      ['bot', 'Aap kab tak payment karenge?', 0],
+      ['unknown', 'Wapas apne sawaal par aate hain, aap kab tak payment karenge?', 4],
+      ['user', 'Haan ji.', 9],
+    ),
+    structured_result: {
+      identity_confirmed: 'yes',
+      opt_out_requested: 'no',
+      unanswered_questions: [],
+      will_pay: 'yes',
+      evidence_quotes: { will_pay: 'Wapas apne sawaal par aate hain' },
+    },
+  });
+
+  assert.equal(judgement.answers.will_pay, 'unknown');
+  assert.equal(judgement.disposition, 'needs-human');
+  assert.match(judgement.discarded[0]!.reason, /recipient spoke/);
+});
+
+test('a null offset does not become a claim nobody can find', () => {
+  // CALL-E returns offset_seconds as null on some turns. A Claim carrying null
+  // points at no moment in the recording.
+  const judgement = judgeWith({
+    status: 'completed',
+    transcript_turns: [
+      { speaker: 'user', text: 'Haan main kal portal pe kar dunga.', offset_seconds: null },
+    ],
+    structured_result: {
+      identity_confirmed: 'yes',
+      opt_out_requested: 'no',
+      unanswered_questions: [],
+      will_pay: 'yes',
+      evidence_quotes: { will_pay: 'main kal portal pe kar dunga' },
+    },
+  });
+
+  assert.equal(judgement.claims.length, 1);
+  assert.equal(judgement.claims[0]!.offsetSeconds, 0);
+});
