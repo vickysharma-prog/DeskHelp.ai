@@ -40,6 +40,9 @@ export interface CalleCallResponse {
   readonly completion_confidence?: { score?: number; label?: string } | null;
   readonly structured_result?: Record<string, unknown> | null;
   readonly recipients?: readonly CalleRecipientResult[];
+  /** Why the call did not happen. CALL-E puts the readable reason here. */
+  readonly failure_code?: string | number | null;
+  readonly failure_message?: string | null;
 }
 
 export interface CalleCreateBody {
@@ -161,6 +164,37 @@ export function assertSchemaSupported(
 export function localeFor(register: SpokenRegister, region: string): string {
   const language = register === 'hi-en' ? 'hi' : register;
   return `${language}-${region}`;
+}
+
+/**
+ * The single recipient's result, with the call-level failure reason folded in.
+ *
+ * CALL-E puts the readable reason for a failure on the call rather than on the
+ * recipient, so a recipient read on its own says only "failed" and a phone
+ * nobody answered cannot be told apart from one that was answered and hung up.
+ *
+ * This lives here rather than in the caller because it was duplicated once and
+ * the copy was immediately wrong: the runner folded the reason in and the
+ * re-judging tool did not, so the same call read differently depending on
+ * which one looked at it.
+ */
+export function recipientResultOf(
+  response: CalleCallResponse,
+): CalleRecipientResult {
+  const reported = response.recipients?.[0];
+  if (!reported) {
+    return {
+      status: response.status,
+      structured_result: response.structured_result ?? null,
+      failure_code: response.failure_code ?? null,
+      failure_message: response.failure_message ?? null,
+    };
+  }
+  return {
+    ...reported,
+    failure_code: reported.failure_code ?? response.failure_code ?? null,
+    failure_message: reported.failure_message ?? response.failure_message ?? null,
+  };
 }
 
 export type PlaceOutcome =

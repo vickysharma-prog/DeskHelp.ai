@@ -22,6 +22,7 @@ import { readFile } from 'node:fs/promises';
 import { judge } from '../src/core/disposition.ts';
 import { transcriptTurnsOf } from '../src/core/disposition.ts';
 import { actionById } from '../src/packs/education/actions.ts';
+import { recipientResultOf } from '../src/core/calle.ts';
 
 const root = join(import.meta.dirname, '..');
 
@@ -84,14 +85,9 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const body = (await response.json()) as {
-    recipients?: { status: string }[];
-  };
-  const recipient = body.recipients?.[0];
-  if (!recipient) {
-    console.error('\nThat call has no recipient result.\n');
-    process.exit(1);
-  }
+  // Through the same folding the runner uses, so a call reads the same way
+  // here as it did when it was placed.
+  const recipient = recipientResultOf(await response.json());
 
   const verdict = judge({
     action,

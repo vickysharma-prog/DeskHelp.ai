@@ -19,7 +19,13 @@ import { guard } from './guard.ts';
 import { renderCall } from './render.ts';
 import { judge } from './disposition.ts';
 import { decideRetry, calleKeyFor } from './retry.ts';
-import { localeFor, liveGate, placeCall, awaitTerminal } from './calle.ts';
+import {
+  localeFor,
+  liveGate,
+  placeCall,
+  awaitTerminal,
+  recipientResultOf,
+} from './calle.ts';
 import { priorCallsForContact } from './history.ts';
 import { Ledger, idempotencyKeyFor } from './ledger.ts';
 import type { CalleTransport, CalleCreateBody } from './calle.ts';
@@ -266,10 +272,7 @@ export async function runAction(options: RunOptions): Promise<RunResult> {
       ...(options.sleep ? { sleep: options.sleep } : {}),
     });
 
-    const recipientResult = response.recipients?.[0] ?? {
-      status: response.status,
-      structured_result: response.structured_result ?? null,
-    };
+    const recipientResult = recipientResultOf(response);
 
     const judgement = judge({
       action,

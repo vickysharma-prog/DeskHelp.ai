@@ -40,6 +40,8 @@ export interface CalleAttempt {
   readonly status?: string;
   readonly started_at?: string;
   readonly transcript_turns?: readonly TranscriptTurn[];
+  readonly failure_code?: string | number | null;
+  readonly failure_message?: string | null;
 }
 
 /** The shape DeskHelp reads back from CALL-E for a single recipient. */
@@ -49,6 +51,28 @@ export interface CalleRecipientResult {
   readonly transcript_turns?: readonly TranscriptTurn[];
   readonly attempts?: readonly CalleAttempt[];
   readonly completion_confidence?: { score?: number; label?: string } | null;
+  readonly failure_code?: string | number | null;
+  readonly failure_message?: string | null;
+}
+
+/**
+ * Everything CALL-E said about why a call did not happen, in one string.
+ *
+ * It arrives in three places — on the call, on the recipient, and on the
+ * attempt — and which one carries the useful sentence varies. Reading only the
+ * recipient found nothing, which is how a call nobody answered was filed as
+ * one a person must look at.
+ */
+function failureTextOf(result: CalleRecipientResult): string {
+  const latest = (result.attempts ?? []).at(-1);
+  return [
+    result.failure_message,
+    result.failure_code,
+    latest?.failure_message,
+    latest?.status,
+  ]
+    .filter((part) => part !== null && part !== undefined && part !== '')
+    .join(' ');
 }
 
 /**
@@ -201,9 +225,42 @@ const DECLINED = new Set(['declined', 'rejected', 'hangup_by_callee']);
  * `needs-human`. That is deliberate: an unknown outcome must reach a person
  * rather than be filed as a missed call and quietly redialled.
  */
-function dispositionForStatus(status: string): Disposition {
+/**
+ * The far end ended the call. Never retryable, whatever else is in the message.
+ *
+ * "Hangup by: bot" is the opposite case and must not match here: that is the
+ * platform giving up on a phone nobody answered.
+ */
+const CALLEE_ENDED =
+  /hangup\s*by:?\s*(user|callee|customer|human|recipient)|by\s*callee|declined|rejected|refus/i;
+
+/** The phone was never engaged. Retryable, within the action's own limit. */
+const NEVER_ENGAGED =
+  /no[\s_-]*answer|busy|voicemail|answer(ing)?\s*machine|unavailable|not\s*reachable|no[\s_-]*response|timeout/i;
+
+/**
+ * Maps a provider outcome onto a disposition without inheriting the provider's
+ * vocabulary or its retry.
+ *
+ * CALL-E reports a phone nobody picked up as `status: "failed"` with the real
+ * reason in prose: `calling task status=NO ANSWER (Hangup by: bot)`. Reading
+ * the status alone made that unrecognised, so it became `needs-human` and the
+ * retry never fired. A person who does not answer is exactly the one case that
+ * should be rung again, so that filed every missed call as work for a human
+ * and never called anybody back.
+ *
+ * The order below is the safety. A refusal wins over a non-connection, because
+ * mistaking a hang-up for a missed call means the more clearly somebody
+ * refuses, the more often they are rung. Anything still unrecognised reaches a
+ * person, as `docs/adr/0006-a-refusal-is-not-a-missed-call.md` requires.
+ */
+function dispositionForStatus(status: string, failureText = ''): Disposition {
   if (NOT_REACHED.has(status)) return 'unreached';
   if (DECLINED.has(status)) return 'declined';
+
+  if (CALLEE_ENDED.test(failureText)) return 'declined';
+  if (NEVER_ENGAGED.test(failureText)) return 'unreached';
+
   return 'needs-human';
 }
 
@@ -238,9 +295,14 @@ export function judge(args: {
   //    outcome of "no".
   const status = result.status?.trim().toLowerCase() ?? '';
   if (status !== 'completed') {
+    const failureText = failureTextOf(result);
     return {
-      disposition: dispositionForStatus(status),
-      reasons: [`Call status was "${result.status}", not "completed".`],
+      disposition: dispositionForStatus(status, failureText),
+      reasons: [
+        failureText
+          ? `Call status was "${result.status}", not "completed": ${failureText}`
+          : `Call status was "${result.status}", not "completed".`,
+      ],
       answers: {},
       claims: [],
       unansweredQuestions: [],

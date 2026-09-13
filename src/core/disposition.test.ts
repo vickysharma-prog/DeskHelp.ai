@@ -382,3 +382,60 @@ test('turns are read from the attempt, which is where CALL-E files them', () => 
 
   assert.equal(transcriptTurnsOf({ status: 'completed' }).length, 0);
 });
+
+test('a phone nobody answered is retryable; one that was hung up on is not', () => {
+  // From a real call. CALL-E reports an unanswered phone as status "failed"
+  // with the reason only in prose, so reading the status alone filed it as
+  // work for a person and the retry never fired. The one case that should be
+  // rung again was the one case that never was.
+  const judgeWith = (status: string, failure: string | null) =>
+    judge({
+      action,
+      callId: 'call_x',
+      contactId: 'c-1',
+      result: { status, failure_message: failure },
+    }).disposition;
+
+  assert.equal(
+    judgeWith('failed', 'calling task status=NO ANSWER (Hangup by: bot)'),
+    'unreached',
+    'the platform gave up on a phone nobody answered',
+  );
+  assert.equal(judgeWith('failed', 'calling task status=BUSY'), 'unreached');
+  assert.equal(judgeWith('failed', 'VOICEMAIL reached'), 'unreached');
+
+  // The far end ended it. A hang-up is consent withdrawn, and redialling it
+  // means the more clearly somebody refuses, the more often they are rung.
+  assert.equal(
+    judgeWith('failed', 'calling task status=DECLINED (Hangup by: user)'),
+    'declined',
+  );
+  assert.equal(judgeWith('failed', 'Hangup by: callee'), 'declined');
+
+  // A refusal beats a non-connection when a message somehow carries both.
+  assert.equal(
+    judgeWith('failed', 'NO ANSWER then DECLINED (Hangup by: user)'),
+    'declined',
+    'the refusal has to win, or a refusal gets retried',
+  );
+
+  // Still unrecognised, still a person's problem. Never a silent redial.
+  assert.equal(judgeWith('failed', 'gateway exploded'), 'needs-human');
+  assert.equal(judgeWith('failed', null), 'needs-human');
+  assert.equal(judgeWith('canceled', null), 'needs-human');
+});
+
+test('the failure reason CALL-E gave is kept, not thrown away', () => {
+  // Otherwise the operator sees "not completed" and has to go to the provider
+  // dashboard to learn it was simply not answered.
+  const verdict = judge({
+    action,
+    callId: 'call_x',
+    contactId: 'c-1',
+    result: {
+      status: 'failed',
+      failure_message: 'calling task status=NO ANSWER (Hangup by: bot)',
+    },
+  });
+  assert.match(verdict.reasons[0]!, /NO ANSWER/);
+});
