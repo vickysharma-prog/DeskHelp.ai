@@ -46,22 +46,40 @@ async function main() {
     });
   }, DEMO);
 
+  // Two changes to the motion, in opposite directions.
+  //
   // The page's background drifts continuously. On screen that is pleasant; in
   // a GIF it changes every pixel of every frame and the file triples in size
-  // for motion nobody is looking at. The tour's own movement stays.
+  // for motion nobody is looking at. It goes.
+  //
+  // The reception scene stays, but it has to be wound forward. Its cycle runs
+  // 7.8 seconds and the first 4.4 of those are deliberately still: that is the
+  // gap between one ring and the next. A recorder that waits a few seconds on
+  // the dashboard lands inside that gap every time and films a photograph.
+  // Winding each animation on by 4.4 seconds, and keeping the offsets between
+  // them, starts the tour on the ring itself.
   await page.addInitScript(() => {
     const style = document.createElement('style');
     style.textContent = `
       body { animation: none !important; }
       .logo.lg { animation: none !important; }
+
+      .scene-handset,
+      .scene-phone     { animation-delay: -4.4s !important; }
+      .scene-ripple    { animation-delay:  0.2s !important; }
+      .scene-ripple.d1 { animation-delay:  0.6s !important; }
+      .scene-ripple.d2 { animation-delay:  1.0s !important; }
+      .scene-card      { animation-delay:  0.8s !important; }
+      .scene-card.d1   { animation-delay:  1.5s !important; }
     `;
     document.addEventListener('DOMContentLoaded', () => document.head.append(style));
   });
 
   // --- the tour ------------------------------------------------------------
   await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-  // Long enough for the banner, the tiles and the ringing phone to play.
-  await page.waitForTimeout(3200);
+  // Long enough for the banner, the tiles, the phone to ring and the calls to
+  // leave the desk and travel most of the way across.
+  await page.waitForTimeout(5600);
 
   await page.getByRole('button', { name: /^Workflows/ }).click();
   await page.waitForTimeout(1800);

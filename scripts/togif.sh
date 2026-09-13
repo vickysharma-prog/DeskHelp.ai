@@ -20,13 +20,21 @@ OUT=assets/screens/tour.gif
 FPS=${FPS:-9}
 WIDTH=${WIDTH:-820}
 COLORS=${COLORS:-160}
+# The recorder signs in before the tour, which takes a few seconds on a page
+# the tour is not about. Those seconds are dropped here rather than there,
+# because the browser has to load that page either way.
+START=${START:-6.3}
+
+# The cut is a filter rather than -ss, because the second pass has two inputs
+# and -ss there would be read as an option on whichever input followed it.
+CUT="trim=start=$START,setpts=PTS-STARTPTS"
 
 "$FF" -y -v error -i "$IN" \
-  -vf "fps=$FPS,scale=$WIDTH:-1:flags=lanczos,palettegen=max_colors=$COLORS:stats_mode=diff" \
+  -vf "$CUT,fps=$FPS,scale=$WIDTH:-1:flags=lanczos,palettegen=max_colors=$COLORS:stats_mode=diff" \
   .local/recording/palette.png
 
 "$FF" -y -v error -i "$IN" -i .local/recording/palette.png \
-  -lavfi "fps=$FPS,scale=$WIDTH:-1:flags=lanczos[v];[v][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" \
+  -lavfi "[0:v]$CUT,fps=$FPS,scale=$WIDTH:-1:flags=lanczos[v];[v][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" \
   "$OUT"
 
 echo "  $OUT  $(du -k "$OUT" | cut -f1) KB"
