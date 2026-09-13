@@ -199,6 +199,24 @@ export async function runAction(options: RunOptions): Promise<RunResult> {
       priorCalls,
     });
 
+    // A preview stops here, and it stops here rather than later on purpose.
+    // Everything worth looking at already exists: the exact words, the masked
+    // destination, the warnings. Going one line further builds a body and
+    // hands it to a transport, and whether that rings a phone then depends on
+    // which transport the caller happened to pass in. Reading a plan must
+    // never be able to dial, however it is called.
+    if (preview) {
+      outcomes.push({
+        contactId: contact.id,
+        maskedPhone: rendered.maskedDestination,
+        status: 'simulated',
+        detail: 'Preview only. Nothing reserved, nothing dialled, nothing recorded.',
+        warnings: decision.warnings,
+        taskText: rendered.taskText,
+      });
+      continue;
+    }
+
     const body: CalleCreateBody = {
       task: rendered.taskText,
       recipients: [

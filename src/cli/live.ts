@@ -31,7 +31,7 @@ import { createInterface } from 'node:readline/promises';
 
 import { Ledger } from '../core/ledger.ts';
 import { Store } from '../core/store.ts';
-import { HttpTransport, liveGate } from '../core/calle.ts';
+import { FixtureTransport, HttpTransport, liveGate } from '../core/calle.ts';
 import { maskPhone, isValidE164 } from '../core/guard.ts';
 import { runAction } from '../core/runner.ts';
 import { periodKeyFor } from '../core/schedule.ts';
@@ -143,7 +143,10 @@ async function main(): Promise<void> {
     // as you like costs no calls and does not consume the authorisation.
     const preview = await runAction({
       action, institute, factSheet, contacts: [contact], periodKey,
-      ledger, transport: new HttpTransport('unused'), env: {}, now, preview: true,
+      // Belt and braces. `preview: true` already returns before any transport
+      // is touched; handing it a transport with no network makes that true
+      // twice over, so a regression in one place cannot dial.
+      ledger, transport: new FixtureTransport(), env: {}, now, preview: true,
     });
 
     rule('WHAT IT WOULD SAY');

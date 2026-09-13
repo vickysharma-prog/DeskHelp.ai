@@ -392,8 +392,9 @@ test('a preview writes nothing, so looking at a run never consumes it', async ()
     sleep: noSleep,
   };
 
-  await runAction({ ...base, transport: new FixtureTransport(), preview: true });
-  await runAction({ ...base, transport: new FixtureTransport(), preview: true });
+  const looked = new FixtureTransport();
+  await runAction({ ...base, transport: looked, preview: true });
+  await runAction({ ...base, transport: looked, preview: true });
 
   assert.deepEqual(
     ledger.forPeriod('northline', 'fee-reminder', '2026-09'),
@@ -401,11 +402,64 @@ test('a preview writes nothing, so looking at a run never consumes it', async ()
     'a preview must leave the ledger untouched',
   );
 
+  // This assertion is the one that was missing, and its absence hid a real
+  // bug: the preview reached the transport for every allowed contact and the
+  // fixture accepted the calls without complaint. With an HTTP transport in
+  // its place, reading a plan dialled a phone.
+  assert.equal(
+    looked.sent.length,
+    0,
+    'a preview must not hand a body to the transport at all',
+  );
+
   // The real run still reaches everybody.
   const real = new FixtureTransport();
   const result = await runAction({ ...base, transport: real });
   assert.equal(real.sent.length, 2);
   assert.ok(result.outcomes.every((outcome) => outcome.status !== 'skipped'));
+  ledger.close();
+});
+
+test('a preview cannot dial, whatever transport it is handed', async () => {
+  // The rule is not "previews are given a safe transport". It is "a preview
+  // never reaches one". A caller who passes the live transport by mistake, or
+  // a future surface that only has the live one to hand, must still be unable
+  // to ring a phone by looking at a plan. This transport makes contact loud:
+  // if the preview touches it, the test fails instead of quietly succeeding.
+  const ledger = new Ledger();
+  const imported = importContacts(CSV);
+
+  const explodes = {
+    async createCall(): Promise<{ call_id: string }> {
+      throw new Error('a preview reached the transport');
+    },
+    async getCall(): Promise<CalleCallResponse> {
+      throw new Error('a preview polled for a result');
+    },
+  };
+
+  const result = await runAction({
+    action: actionById('fee-reminder')!,
+    institute,
+    factSheet,
+    contacts: imported.contacts,
+    periodKey: '2026-09',
+    ledger,
+    transport: explodes,
+    env: {},
+    now: SEPTEMBER,
+    sleep: noSleep,
+    preview: true,
+  });
+
+  // And it still answers the question the operator opened it to ask.
+  assert.equal(result.outcomes.length, 2);
+  for (const outcome of result.outcomes) {
+    assert.ok(
+      outcome.taskText && outcome.taskText.length > 0,
+      'a preview exists to show the words, so it must still render them',
+    );
+  }
   ledger.close();
 });
 
