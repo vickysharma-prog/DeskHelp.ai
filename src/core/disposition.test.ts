@@ -439,3 +439,60 @@ test('the failure reason CALL-E gave is kept, not thrown away', () => {
   });
   assert.match(verdict.reasons[0]!, /NO ANSWER/);
 });
+
+test('a phone that never rang is not a phone nobody answered', () => {
+  // Both real failures on this project had an attempt that started and
+  // finished in the same instant, and one of them said "NO ANSWER" in its
+  // prose. Reading that prose filed a route that never connected as a person
+  // who did not pick up, which is information about the recipient that
+  // nobody has. `ringfence` in the CALL-E submissions repository hit the same
+  // mislabel against the live API and split the two apart.
+  const zeroRing = (failure: string) => ({
+    status: 'failed',
+    failure_message: failure,
+    attempts: [
+      {
+        status: 'failed',
+        started_at: '2026-09-13T07:03:30Z',
+        completed_at: '2026-09-13T07:03:30Z',
+      },
+    ],
+  });
+
+  assert.equal(
+    judge({ action, callId: 'c', contactId: 'c-1', result: zeroRing('calling task status=NO ANSWER (Hangup by: bot)') })
+      .disposition,
+    'needs-human',
+    'zero ring time is a connection failure, whatever the prose says',
+  );
+
+  // The same prose, with the phone actually ringing for twenty seconds, is a
+  // genuine no-answer and stays retryable.
+  assert.equal(
+    judge({
+      action,
+      callId: 'c',
+      contactId: 'c-1',
+      result: {
+        status: 'failed',
+        failure_message: 'calling task status=NO ANSWER (Hangup by: bot)',
+        attempts: [
+          {
+            status: 'failed',
+            started_at: '2026-09-13T07:03:30Z',
+            completed_at: '2026-09-13T07:03:50Z',
+          },
+        ],
+      },
+    }).disposition,
+    'unreached',
+  );
+
+  // A refusal is still a refusal even with no ring time recorded, because
+  // being hung up on is a statement and this must never become a retry.
+  assert.equal(
+    judge({ action, callId: 'c', contactId: 'c-1', result: zeroRing('DECLINED (Hangup by: user)') })
+      .disposition,
+    'declined',
+  );
+});

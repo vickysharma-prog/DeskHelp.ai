@@ -39,6 +39,7 @@ export interface CalleAttempt {
   readonly id?: string;
   readonly status?: string;
   readonly started_at?: string;
+  readonly completed_at?: string;
   readonly transcript_turns?: readonly TranscriptTurn[];
   readonly failure_code?: string | number | null;
   readonly failure_message?: string | null;
@@ -63,6 +64,33 @@ export interface CalleRecipientResult {
  * recipient found nothing, which is how a call nobody answered was filed as
  * one a person must look at.
  */
+/**
+ * Whether the phone rang at all.
+ *
+ * CALL-E's own documentation says the Calls API "does not guarantee a distinct
+ * no-answer or callee-decline value" and that `failure_code` has no published
+ * enum, so the prose is a hint and never a verdict. The attempt's own clock is
+ * the harder signal: an attempt that started and finished in the same instant
+ * never rang anybody.
+ *
+ * Prior art: `apps/python/ringfence` in the CALL-E submissions repository,
+ * which found this by validating against the live API and added a distinct
+ * `connection_failed_during_attempt` outcome after its classifier had been
+ * reading these as confirmed no-answers.
+ */
+type RingTime = 'none' | 'some' | 'unknown';
+
+function ringTimeOf(result: CalleRecipientResult): RingTime {
+  const latest = (result.attempts ?? []).at(-1);
+  const started = latest?.started_at;
+  const completed = latest?.completed_at;
+  if (!started || !completed) return 'unknown';
+
+  const elapsed = Date.parse(completed) - Date.parse(started);
+  if (Number.isNaN(elapsed)) return 'unknown';
+  return elapsed <= 0 ? 'none' : 'some';
+}
+
 function failureTextOf(result: CalleRecipientResult): string {
   const latest = (result.attempts ?? []).at(-1);
   return [
@@ -254,11 +282,23 @@ const NEVER_ENGAGED =
  * refuses, the more often they are rung. Anything still unrecognised reaches a
  * person, as `docs/adr/0006-a-refusal-is-not-a-missed-call.md` requires.
  */
-function dispositionForStatus(status: string, failureText = ''): Disposition {
+function dispositionForStatus(
+  status: string,
+  failureText = '',
+  ringTime: RingTime = 'unknown',
+): Disposition {
   if (NOT_REACHED.has(status)) return 'unreached';
   if (DECLINED.has(status)) return 'declined';
 
   if (CALLEE_ENDED.test(failureText)) return 'declined';
+
+  // A phone that never rang says nothing about the person holding it, so it
+  // must not be filed as one they did not answer however the provider words
+  // it. This is the mislabel `ringfence` documents and corrected: an attempt
+  // whose start and finish are the same instant reads as a confirmed
+  // no-answer while actually being a route that failed.
+  if (ringTime === 'none') return 'needs-human';
+
   if (NEVER_ENGAGED.test(failureText)) return 'unreached';
 
   return 'needs-human';
@@ -296,8 +336,9 @@ export function judge(args: {
   const status = result.status?.trim().toLowerCase() ?? '';
   if (status !== 'completed') {
     const failureText = failureTextOf(result);
+    const ringTime = ringTimeOf(result);
     return {
-      disposition: dispositionForStatus(status, failureText),
+      disposition: dispositionForStatus(status, failureText, ringTime),
       reasons: [
         failureText
           ? `Call status was "${result.status}", not "completed": ${failureText}`
