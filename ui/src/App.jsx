@@ -25,6 +25,7 @@ const PAGES = [
 export function App() {
   const [session, setSession] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [peekLanding, setPeekLanding] = useState(false);
   const [page, setPage] = useState('dashboard');
   const [overview, setOverview] = useState(null);
   const [error, setError] = useState('');
@@ -69,6 +70,20 @@ export function App() {
     );
   }
 
+  // Signed in, but looking at the front of the product. Every site lets you
+  // press the logo to get back to the page that explains what the thing is;
+  // this one sent you to a password box instead, and only for people who had
+  // not signed in yet.
+  if (peekLanding) {
+    return (
+      <Landing
+        signedIn
+        hasDemo={Boolean(session.demo)}
+        onSignIn={() => setPeekLanding(false)}
+      />
+    );
+  }
+
   const signOut = async () => {
     await api.logout();
     setOverview(null);
@@ -80,7 +95,11 @@ export function App() {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <div className="brand">
+        <button
+          className="brand"
+          onClick={() => setPeekLanding(true)}
+          title="What DeskHelp is"
+        >
           <Logo />
           <div>
             <div className="wordmark">
@@ -90,7 +109,7 @@ export function App() {
               {overview?.institute?.displayName ?? session.account.instituteName}
             </div>
           </div>
-        </div>
+        </button>
 
         <nav className="nav">
           {PAGES.map((entry) => (

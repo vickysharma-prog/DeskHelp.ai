@@ -176,7 +176,11 @@ function PreviewMock() {
   );
 }
 
-export function Landing({ onSignIn, hasDemo }) {
+export function Landing({ onSignIn, hasDemo, signedIn = false }) {
+  // Somebody already signed in is looking at this page on purpose, so every
+  // call to action becomes the way back to their own desk rather than an
+  // invitation to sign in again.
+  const cta = signedIn ? 'Back to your desk' : 'Get started';
   return (
     <div className="landing">
       <header className="lp-nav">
@@ -194,7 +198,7 @@ export function Landing({ onSignIn, hasDemo }) {
             <a href="#faq">Questions</a>
           </nav>
           <button className="lp-btn solid" onClick={onSignIn}>
-            Get started
+            {cta}
           </button>
         </div>
       </header>
@@ -217,10 +221,10 @@ export function Landing({ onSignIn, hasDemo }) {
 
         <div className="lp-cta rise" style={{ animationDelay: '0.15s' }}>
           <button className="lp-btn solid lg" onClick={onSignIn}>
-            Get started
+            {cta}
           </button>
           <button className="lp-btn lg" onClick={onSignIn}>
-            {hasDemo ? 'Take a look around' : 'See how it works'}
+            {signedIn ? 'Open the dashboard' : hasDemo ? 'Take a look around' : 'See how it works'}
           </button>
         </div>
 
@@ -351,7 +355,7 @@ export function Landing({ onSignIn, hasDemo }) {
         <h2>Give your desk its week back.</h2>
         <p>Set it up in an afternoon. It calls nobody until you say so.</p>
         <button className="lp-btn solid lg" onClick={onSignIn}>
-          Get started
+          {cta}
         </button>
       </section>
 
