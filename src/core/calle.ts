@@ -71,10 +71,86 @@ export interface CalleTransport {
 }
 
 /**
+ * CALL-E accepts a deliberately narrow slice of JSON Schema. Anything outside
+ * it comes back as a 400 `result_schema_invalid`, which costs a round trip to
+ * learn and reads like a fault in the call rather than in the request.
+ *
+ * The vocabulary below is the one the maintainers' own `kept` documents and
+ * enforces. Checking it here, next to the only code that talks to CALL-E,
+ * means a schema mistake fails on the machine that made it.
+ */
+const SUPPORTED_KEYWORDS = new Set([
+  'type',
+  'properties',
+  'required',
+  'enum',
+  'items',
+  'description',
+  'additionalProperties',
+]);
+
+const SUPPORTED_TYPES = new Set([
+  'object',
+  'array',
+  'string',
+  'integer',
+  'number',
+  'boolean',
+]);
+
+export class UnsupportedSchemaError extends Error {}
+
+/** Throws if CALL-E would reject this schema, before anything is sent. */
+export function assertSchemaSupported(
+  node: object,
+  path = 'result_schema',
+): void {
+  const schema = node as Record<string, unknown>;
+  const unsupported = Object.keys(schema)
+    .filter((keyword) => !SUPPORTED_KEYWORDS.has(keyword))
+    .sort();
+  if (unsupported.length > 0) {
+    throw new UnsupportedSchemaError(
+      `${path} uses schema features CALL-E does not support: ${unsupported.join(', ')}.`,
+    );
+  }
+
+  const declared = schema.type;
+  if (Array.isArray(declared)) {
+    throw new UnsupportedSchemaError(
+      `${path} uses a union type. CALL-E accepts one type per field; carry ` +
+        '"not stated" with an enum value such as "unknown" instead.',
+    );
+  }
+  if (declared !== undefined && !SUPPORTED_TYPES.has(String(declared))) {
+    throw new UnsupportedSchemaError(
+      `${path} declares an unsupported type "${String(declared)}".`,
+    );
+  }
+
+  // Explicitly false, not merely absent. An object that says nothing is open,
+  // and an open object is what CALL-E refuses.
+  if (declared === 'object' && schema.additionalProperties !== false) {
+    throw new UnsupportedSchemaError(
+      `${path} must set additionalProperties to false; CALL-E rejects open objects.`,
+    );
+  }
+
+  for (const [name, child] of Object.entries(schema.properties ?? {})) {
+    if (child && typeof child === 'object') {
+      assertSchemaSupported(child, `${path}.${name}`);
+    }
+  }
+  if (schema.items && typeof schema.items === 'object') {
+    assertSchemaSupported(schema.items, `${path}.items`);
+  }
+}
+
+/**
  * Maps a spoken register onto a CALL-E locale for a given region.
  *
- * `hi-en` has no locale of its own — no provider exposes "Hinglish" as a
- * language tag — so it is sent as Hindi, and the code-switching instruction
+ * `hi-en` has no locale of its own, because no provider exposes "Hinglish" as
+ * a language tag, so it is sent as Hindi and the code-switching instruction
  * lives in the task text where it belongs. See `render.ts`.
  *
  * The locale strings follow the pattern in CALL-E's API example ("en-US")
@@ -247,6 +323,18 @@ export async function placeCall(args: {
   readonly idempotencyKey: string;
 }): Promise<PlaceOutcome> {
   const { transport, gate, body, idempotencyKey } = args;
+
+  // Before the network, not after. A schema CALL-E will not accept is a fault
+  // in this codebase, and finding out by spending a round trip makes it look
+  // like a fault in the call. This throws on every path, fixtures included, so
+  // the test suite catches it rather than a live run.
+  assertSchemaSupported(body.result_schema);
+  if (body.recipient_result_schema) {
+    assertSchemaSupported(
+      body.recipient_result_schema,
+      'recipient_result_schema',
+    );
+  }
 
   try {
     const { call_id } = await transport.createCall(body, idempotencyKey);

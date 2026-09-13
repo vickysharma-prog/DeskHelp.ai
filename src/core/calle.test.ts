@@ -3,11 +3,14 @@ import assert from 'node:assert/strict';
 
 import {
   FixtureTransport,
+  assertSchemaSupported,
   awaitTerminal,
   liveGate,
   localeFor,
   placeCall,
 } from './calle.ts';
+import { buildResultSchema } from './render.ts';
+import { EDUCATION_PACK } from '../packs/education/actions.ts';
 import type { CalleCreateBody, CalleTransport } from './calle.ts';
 import type { Institute } from './types.ts';
 
@@ -250,4 +253,59 @@ test('a timeout returns what it last saw rather than throwing', async () => {
 
   assert.equal(timedOut, true);
   assert.equal(response.status, 'in_progress');
+});
+
+test('a schema CALL-E would reject is refused before the request', () => {
+  // Learned the expensive way: an open `evidence_quotes` map came back as a
+  // 400 result_schema_invalid, which reads like the call failed rather than
+  // the request being malformed. CALL-E takes a narrow slice of JSON Schema,
+  // so the slice is checked here instead of on their side.
+  assert.throws(
+    () => assertSchemaSupported({ type: 'object', additionalProperties: { type: 'string' } }),
+    /additionalProperties to false/,
+  );
+
+  // Silence is openness. An object that says nothing about extra keys allows
+  // them, which is the thing being refused.
+  assert.throws(
+    () => assertSchemaSupported({ type: 'object', properties: {} }),
+    /additionalProperties to false/,
+  );
+
+  assert.throws(
+    () => assertSchemaSupported({ type: ['string', 'null'] }),
+    /union type/,
+  );
+
+  assert.throws(
+    () =>
+      assertSchemaSupported({
+        type: 'object',
+        additionalProperties: false,
+        properties: { when: { type: 'string', format: 'date' } },
+      }),
+    /does not support: format/,
+  );
+
+  // And it names the field rather than making somebody search for it.
+  assert.throws(
+    () =>
+      assertSchemaSupported({
+        type: 'object',
+        additionalProperties: false,
+        properties: { nested: { type: 'object', properties: {} } },
+      }),
+    /result_schema\.nested/,
+  );
+});
+
+test('every action in the pack builds a schema CALL-E accepts', () => {
+  // The pack-wide check, so a fifteenth workflow cannot ship a schema that
+  // only fails on a live call.
+  for (const action of EDUCATION_PACK) {
+    assert.doesNotThrow(
+      () => assertSchemaSupported(buildResultSchema(action)),
+      `${action.id} builds a schema CALL-E would reject`,
+    );
+  }
 });

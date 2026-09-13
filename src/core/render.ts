@@ -137,15 +137,28 @@ export function buildResultSchema(action: ActionDefinition): JsonSchema {
         additionalProperties: false,
       },
     },
-    evidence_quotes: {
+  };
+
+  // One named slot per question that demands evidence, rather than a map
+  // keyed by anything. CALL-E rejects an open object outright, and the closed
+  // form is better regardless: a quote filed under a question that does not
+  // exist is a quote nothing will ever check.
+  const evidenced = action.questions.filter((question) => question.requiresEvidence);
+  if (evidenced.length > 0) {
+    properties.evidence_quotes = {
       type: 'object',
       description:
-        'For each answered question, the recipient\'s own words that support ' +
-        'the answer. Key is the question id. Omit a key rather than invent a ' +
-        'quote for it.',
-      additionalProperties: { type: 'string' },
-    },
-  };
+        'For each answered question below, the recipient\'s own words that ' +
+        'support the answer. Omit a key rather than invent a quote for it.',
+      properties: Object.fromEntries(
+        evidenced.map((question) => [
+          question.id,
+          { type: 'string', description: `What they said that supports ${question.id}.` },
+        ]),
+      ),
+      additionalProperties: false,
+    };
+  }
 
   for (const question of action.questions) {
     properties[question.id] = questionFieldSchema(question);
