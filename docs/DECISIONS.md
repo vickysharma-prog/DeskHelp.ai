@@ -254,7 +254,7 @@ Expensive to learn, and none of them visible against a fixture.
 | Fact | Evidence |
 | --- | --- |
 | CALL-E's shared number pool does not reliably reach India | Their own announcements, 6 and 7 Sept: the pool "may be unavailable in certain regions" and is "intended for development and dialing tests" |
-| The fix is to own an outbound number | `+1 208-428-4381`, US local, $2.00/month, plus identity verification to enable outbound. Every call since has connected |
+| The fix is to own an outbound number | A US local number, $2.00/month, plus identity verification to enable outbound. The number itself lives in the CALL-E dashboard and in `.env`, never here. Every call since has connected |
 | The API has no way to choose the caller number | Nothing in any of the 380 submissions sends one. CALL-E picks the account default, which is set in the dashboard |
 | Failed attempts still cost credits | 6 credits each, against 47 for a connected minute |
 | There is no account, usage or billing endpoint | `/v1/account`, `/v1/usage`, `/v1/balance`, `/v1/credits`, `/v1/limits` all 404. The dashboard is the only source |

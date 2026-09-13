@@ -104,7 +104,7 @@ Two things to get right in the take:
 
 - **20 CALL-E calls, 12 spent, 8 left.**
 - **CALL-E's shared number pool does not reach India.** The account now owns
-  `+1 208-428-4381` as its default outbound number, $2.00/month, identity
+  a US local number as its default outbound number, $2.00/month, identity
   verified. That is what made calling work. Their announcement of 6 and 7 Sept
   documents the restriction.
 - **The real numbers never leave `.env`.** `DESKHELP_TEST_PHONE` and

@@ -180,7 +180,7 @@ international line. Full list in the CALL-E integrations README.
   chosen by position (`--phone 2`) so a number never reaches a command line.
   Each is its own contact, with its own history and its own cooldown.
 - **CALL-E's shared number pool does not reach India.** The account owns
-  `+1 208-428-4381` as its default outbound number, identity verified. That is
+  a US local number as its default outbound number, identity verified. That is
   what made calling work at all; see `docs/DECISIONS.md` Part 4.
 
 ---

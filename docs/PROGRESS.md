@@ -91,7 +91,7 @@ student, so nothing was attributed to that student.
 Four calls in a row failed with zero ring time. CALL-E's own announcements, of
 6 and 7 September, say the **shared public number pool is unavailable in some
 regions** and recommend buying a US or Brazil number. Buying
-`+1 208-428-4381` ($2.00/month), verifying identity, and setting it as the
+a US local number ($2.00/month), verifying identity, and setting it as the
 default outbound number fixed it immediately. Both connected calls since have
 worked.
 
