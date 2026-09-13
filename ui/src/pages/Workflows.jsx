@@ -201,11 +201,26 @@ function CallPanel({ workflow, onClose, onPlaced }) {
   const [problem, setProblem] = useState('');
   const [result, setResult] = useState(null);
 
+  const [allowed, setAllowed] = useState([]);
+
   useEffect(() => {
-    api.contacts().then(setContacts).catch((error) => setProblem(error.message));
+    Promise.all([api.contacts(), api.overview()])
+      .then(([list, overview]) => {
+        setContacts(list);
+        setAllowed(overview.institute?.allowedDestinations ?? []);
+      })
+      .catch((error) => setProblem(error.message));
   }, []);
 
   const contact = contacts.find((entry) => entry.id === chosen);
+
+  // Sorted by whether a phone can actually ring, because in a list of a few
+  // hundred families the handful on the allow list are the ones somebody is
+  // looking for, and scrolling past the rest to find them is how you end up
+  // picking the wrong row.
+  const canRing = contacts.filter((entry) => allowed.includes(entry.phone));
+  const cannot = contacts.filter((entry) => !allowed.includes(entry.phone));
+  const label = (entry) => `${entry.fullName} · ${entry.phone}`;
 
   const place = async () => {
     setBusy(true);
@@ -270,11 +285,28 @@ function CallPanel({ workflow, onClose, onPlaced }) {
                 <span>Who should be called?</span>
                 <select value={chosen} onChange={(event) => setChosen(event.target.value)}>
                   <option value="">Choose somebody</option>
-                  {contacts.map((entry) => (
-                    <option key={entry.id} value={entry.id}>
-                      {entry.fullName} · {entry.phone}
-                    </option>
-                  ))}
+                  {canRing.length > 0 ? (
+                    <optgroup label="On the allow list, so a phone will ring">
+                      {canRing.map((entry) => (
+                        <option key={entry.id} value={entry.id}>
+                          {label(entry)}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ) : null}
+                  <optgroup
+                    label={
+                      canRing.length > 0
+                        ? 'Everybody else, who will not be dialled'
+                        : 'Nobody is on the allow list, so none of these will be dialled'
+                    }
+                  >
+                    {cannot.map((entry) => (
+                      <option key={entry.id} value={entry.id}>
+                        {label(entry)}
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
               </label>
 
@@ -292,7 +324,9 @@ function CallPanel({ workflow, onClose, onPlaced }) {
                 {busy
                   ? 'Calling, this takes about a minute'
                   : contact
-                    ? `Call ${contact.fullName} on ${contact.phone}`
+                    ? allowed.includes(contact.phone)
+                      ? `Call ${contact.fullName} on ${contact.phone}`
+                      : `Run it for ${contact.fullName} without dialling`
                     : 'Call now'}
               </button>
             </>
