@@ -241,7 +241,14 @@ export function Landing({ onSignIn, hasDemo, signedIn = false }) {
           <div className="lp-head">
             <h2>See a real call, start to finish</h2>
             <p>
-              One workflow, one phone, and what came back afterwards.
+              One workflow, one phone, and what came back afterwards. Jump to{' '}
+              <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo&t=175s" target="_blank" rel="noreferrer">
+                the call at 2:55
+              </a>{' '}
+              or{' '}
+              <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo&t=275s" target="_blank" rel="noreferrer">
+                the two questions it refused at 4:35
+              </a>.
             </p>
           </div>
           <DemoVideo id={DEMO_VIDEO_ID} />

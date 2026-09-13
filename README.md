@@ -32,7 +32,12 @@ office that runs on the phone. Calls happen through
 may be said and what the answer meant is DeskHelp's.
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo"><strong>Watch it place a real call &rarr;</strong></a>
+  <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo"><strong>Watch it place a real call &rarr;</strong></a><br>
+  <sub>
+    <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo&t=100s">1:40 reading a call before anybody hears it</a> ·
+    <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo&t=175s">2:55 a real call</a> ·
+    <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo&t=275s">4:35 two questions it refused</a>
+  </sub>
 </p>
 
 <p align="center">
