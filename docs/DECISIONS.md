@@ -83,9 +83,7 @@ It also costs: `CONTRIBUTING.md` says *"choose **one** scoped contribution"*,
 and Devpost accepts a single PR URL. Two PRs split reviewer attention.
 
 This forfeits the `plugins/` folder's zero-competition slot. That is an
-acceptable trade: the slot was a tactic, not value. The repo's strongest
-entries — `muster`, `sticker`, `local-atlas`, `afterword`, `kept`, `casechaser`,
-`ringer` — all live in the crowded `apps/` folder. Depth wins, not folder
+acceptable trade: the slot was a tactic, not value. Depth wins, not folder
 choice.
 
 ---
@@ -208,8 +206,8 @@ CALL-E accepts `type`, `properties`, `required`, `enum`, `items`,
 `description` and `additionalProperties: false`, and nothing else. A schema
 mistake is otherwise discovered by a round trip that returns
 `result_schema_invalid`, which reads like the call failed rather than the
-request being malformed. The vocabulary is the one the maintainers' own `kept`
-documents and enforces.
+request being malformed, so the vocabulary is checked here before anything is
+sent.
 
 ### ✅ A refusal beats a non-connection, and an unknown outcome beats both
 

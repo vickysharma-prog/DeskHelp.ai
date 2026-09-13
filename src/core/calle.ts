@@ -78,9 +78,9 @@ export interface CalleTransport {
  * it comes back as a 400 `result_schema_invalid`, which costs a round trip to
  * learn and reads like a fault in the call rather than in the request.
  *
- * The vocabulary below is the one the maintainers' own `kept` documents and
- * enforces. Checking it here, next to the only code that talks to CALL-E,
- * means a schema mistake fails on the machine that made it.
+ * Checking the vocabulary here, next to the only code that talks to CALL-E,
+ * means a schema mistake fails on the machine that made it rather than after a
+ * round trip.
  */
 const SUPPORTED_KEYWORDS = new Set([
   'type',
