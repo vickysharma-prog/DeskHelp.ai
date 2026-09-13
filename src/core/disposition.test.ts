@@ -445,8 +445,7 @@ test('a phone that never rang is not a phone nobody answered', () => {
   // finished in the same instant, and one of them said "NO ANSWER" in its
   // prose. Reading that prose filed a route that never connected as a person
   // who did not pick up, which is information about the recipient that
-  // nobody has. `ringfence` in the CALL-E submissions repository hit the same
-  // mislabel against the live API and split the two apart.
+  // nobody has. The two are split apart here so that never happens again.
   const zeroRing = (failure: string) => ({
     status: 'failed',
     failure_message: failure,

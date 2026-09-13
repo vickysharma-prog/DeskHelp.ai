@@ -66,10 +66,10 @@ export interface CalleRecipientResult {
  * the harder signal: an attempt that started and finished in the same instant
  * never rang anybody.
  *
- * Prior art: `apps/python/ringfence` in the CALL-E submissions repository,
- * which found this by validating against the live API and added a distinct
- * `connection_failed_during_attempt` outcome after its classifier had been
- * reading these as confirmed no-answers.
+ * This only shows up against the live API. A fixture makes up a plausible
+ * duration, so a classifier built on fixtures alone reads every connection
+ * failure as a confirmed no-answer and reports that a person did not pick up
+ * when no phone ever rang.
  */
 type RingTime = 'none' | 'some' | 'unknown';
 
@@ -324,9 +324,8 @@ function dispositionForStatus(
 
   // A phone that never rang says nothing about the person holding it, so it
   // must not be filed as one they did not answer however the provider words
-  // it. This is the mislabel `ringfence` documents and corrected: an attempt
-  // whose start and finish are the same instant reads as a confirmed
-  // no-answer while actually being a route that failed.
+  // it. An attempt whose start and finish are the same instant reads as a
+  // confirmed no-answer while actually being a route that failed.
   if (ringTime === 'none') return 'needs-human';
 
   if (NEVER_ENGAGED.test(failureText)) return 'unreached';

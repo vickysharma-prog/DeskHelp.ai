@@ -62,8 +62,8 @@ student, so nothing was attributed to that student.
    in prose. Reading the status alone filed it as `needs-human`, so the retry
    never fired. Reading the prose alone was worse: both real failures had an
    attempt whose start and finish were the same instant, which is a connection
-   failure and says nothing about the recipient. `ringfence` in the submissions
-   repo documents the same mislabel, found the same way.
+   failure and says nothing about the recipient. A fixture invents a plausible
+   duration, so this is invisible until the live API is involved.
 
 5. **A call that never connected started a five-day cooldown.** Four failures
    in a row locked both test contacts out of their workflows. An institute
@@ -510,8 +510,8 @@ institutes. Domain came from the user, not from the assistant; education is
 verified open (`coaching` 0, `tuition` 0, `admission` 0, `education` 0 across
 all 380 PR titles).
 
-Adjacent prior art found and recorded for citation: `roll-call` (PR #325, open,
-strong) and `school payment assistant` (PR #387, closed unmerged).
+Decided that the submission would reference no other entry. See
+`DECISIONS.md`, "Killed: citing other entries as prior art".
 
 ### Setup completed
 

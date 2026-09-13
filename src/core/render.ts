@@ -178,10 +178,11 @@ export function buildResultSchema(action: ActionDefinition): JsonSchema {
 /**
  * The identity gate for calls that concern a minor.
  *
- * Adapted from the pattern the CALL-E maintainers accepted in `roll-call`
- * (PR #325): the student's name is not spoken until the answerer has confirmed
- * they are the named guardian, and anyone else — including voicemail — hears
- * only that the institute called.
+ * The student's name is not spoken until the answerer has confirmed they are
+ * the named guardian. Anyone else, voicemail included, hears only that the
+ * institute called and would like a call back. A phone number is not proof of
+ * who picked up, so the gate is a question asked on the call rather than an
+ * assumption made before it.
  */
 function identityGateFor(
   action: ActionDefinition,

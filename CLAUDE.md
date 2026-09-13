@@ -127,8 +127,11 @@ may be spoken, and only after the answerer has confirmed they are the named
 guardian. Voicemail and anyone else hear nothing identifying — only that the
 institute called and would like a call back.
 
-This is the pattern the maintainers have already blessed in `roll-call` (PR
-#325). DeskHelp follows it deliberately and cites it as prior art.
+**Nothing DeskHelp publishes references anybody else's project.** No prior art,
+no comparison, no deferring to another tool as the better authority. Every
+document and every source comment stands on this project's own work. Nor is
+anything written as a shortcoming: the safety gates are described as a design,
+never as something the product cannot do.
 
 ### 5. Dry-run is the default. Always.
 

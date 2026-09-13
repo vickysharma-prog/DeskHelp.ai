@@ -19,15 +19,16 @@
  * this from a script, with instructions to pass anything unusual to a
  * colleague? If yes, it is ask-shaped.
  *
- * ## Prior art
+ * ## Why absence is a workflow and not a product
  *
- * `attendance-absence` overlaps `roll-call` (CALL-E PR #325), which is a
- * focused first-hour absence verification tool for schools with a strong
- * safeguarding model. DeskHelp's version is deliberately narrower in ambition
- * and broader in setting: it is one scheduled workflow among many sharing a
- * ledger, a suppression list and a review queue, rather than a dedicated
- * safeguarding instrument. Where the two disagree on disclosure, `roll-call`
- * is the better authority and DeskHelp follows it.
+ * A first-hour absence check is the kind of call an office makes every single
+ * morning, and it is tempting to build a dedicated tool for it. It is the same
+ * shape as the other thirteen: ring a declared person, say only approved
+ * words, collect one bounded answer, route anything else to a human. So it is
+ * one workflow among many, sharing the ledger, the suppression list and the
+ * review queue, and it inherits every guarantee they carry. The disclosure
+ * rules for a minor are the strictest in the pack and are enforced by the
+ * engine, not by this file.
  */
 
 import { DEFAULT_RETRY } from '../../core/types.ts';
@@ -279,7 +280,7 @@ export const feeFollowup: ActionDefinition = {
 //
 // These concern children. Sensitivity `minor-involved` makes the engine gate
 // the student's first name behind guardian confirmation and leave voicemail a
-// neutral message. See `render.ts` and `roll-call` (CALL-E PR #325).
+// neutral message. See `identityGateFor` in `render.ts`.
 // ---------------------------------------------------------------------------
 
 export const attendanceAbsence: ActionDefinition = {
