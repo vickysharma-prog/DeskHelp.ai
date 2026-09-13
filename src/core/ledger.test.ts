@@ -213,3 +213,70 @@ test('a run can be read back for the operator', () => {
   );
   ledger.close();
 });
+
+test('a call that never connected does not start the contact cooldown', () => {
+  // Four real calls in a row failed at the provider before any phone rang, and
+  // each one still started a five-day cooldown on that person. An institute
+  // whose route has a bad afternoon would be locked out of calling anybody for
+  // a week, and the ledger would say those families had been contacted.
+  const ledger = new Ledger();
+  const auth = {
+    instituteId: 'inst',
+    actionId: 'fee-reminder',
+    contactId: 'c-1',
+    periodKey: '2026-09',
+  };
+  const placedAt = new Date('2026-09-13T08:00:00Z');
+
+  const reservation = ledger.reserve(auth, placedAt);
+  ledger.markPlaced(reservation.idempotencyKey, 'call_never_rang');
+  ledger.markSettled(reservation.idempotencyKey, 'needs-human');
+  ledger.recordOutcome({
+    idempotencyKey: reservation.idempotencyKey,
+    instituteId: 'inst',
+    contactId: 'c-1',
+    actionId: 'fee-reminder',
+    callId: 'call_never_rang',
+    placedAt,
+    disposition: 'needs-human',
+    answers: {},
+    claims: [],
+    unansweredQuestions: [],
+    transcript: [],
+  });
+
+  assert.equal(
+    ledger.lastContactedAt('inst', 'fee-reminder', 'c-1'),
+    undefined,
+    'nobody was contacted, so nothing should be counted against them',
+  );
+
+  // A call that did connect still counts, even when it needs a person
+  // afterwards: their phone rang and they spoke.
+  const second = { ...auth, periodKey: '2026-10' };
+  const reserved = ledger.reserve(second, new Date('2026-10-13T08:00:00Z'));
+  ledger.markPlaced(reserved.idempotencyKey, 'call_rang');
+  ledger.markSettled(reserved.idempotencyKey, 'needs-human');
+  ledger.recordOutcome({
+    idempotencyKey: reserved.idempotencyKey,
+    instituteId: 'inst',
+    contactId: 'c-1',
+    actionId: 'fee-reminder',
+    callId: 'call_rang',
+    placedAt: new Date('2026-10-13T08:00:00Z'),
+    disposition: 'needs-human',
+    answers: {},
+    claims: [],
+    unansweredQuestions: [],
+    transcript: [
+      { offset_seconds: 0, speaker: 'bot', text: 'Hello, this is an automated call.' },
+      { offset_seconds: 4, speaker: 'user', text: 'Kaun bol raha hai?' },
+    ],
+  });
+
+  assert.ok(
+    ledger.lastContactedAt('inst', 'fee-reminder', 'c-1'),
+    'a call that reached somebody is a contact, whatever it concluded',
+  );
+  ledger.close();
+});
