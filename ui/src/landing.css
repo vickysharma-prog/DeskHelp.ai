@@ -673,3 +673,50 @@
     grid-template-columns: 120px 1fr;
   }
 }
+
+/* --- the demo video ------------------------------------------------------
+   The frame owns the shape, the player fills it. Without this the iframe
+   takes its default 300x150 and then stretches to whatever height it likes,
+   and the poster image sits at its natural size against the left edge. */
+
+.video-frame {
+  position: relative;
+  width: min(100%, 900px);
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0e0e12;
+  border: 1px solid var(--lp-border, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 18px 48px rgba(17, 17, 20, 0.16);
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Before an id exists, the frame holds its place rather than collapsing. */
+.video-pending {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #4c1d95, #6d28d9 55%, #7c3aed);
+}
+
+.video-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 560px) {
+  .video-frame {
+    border-radius: 12px;
+  }
+}
