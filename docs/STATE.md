@@ -3,8 +3,8 @@
 **Read this first when resuming.** It says where the work stands and what the
 next action is. Update it at the end of every working session.
 
-Last updated: **2026-09-13, early afternoon**
-Phase: **built, deployed, and proven on real calls. The video remains.**
+Last updated: **2026-09-13, evening**
+Phase: **built, deployed, proven on real calls, video published. The pull request remains.**
 
 ---
 
@@ -24,7 +24,7 @@ Phase: **built, deployed, and proven on real calls. The video remains.**
 ## Done
 
 - Engine, 14 workflows, scheduler, contact import, review queue, call-to-call
-  memory. **171 tests** and a typecheck, all green.
+  memory. **173 tests** and a typecheck, all green.
 - Accounts, sessions, the web interface, a landing page, and a seeded demo of
   124 families with questions waiting in the queue.
 - **Calls are placed from the product.** A `Call now` button on each workflow,
@@ -40,7 +40,7 @@ Phase: **built, deployed, and proven on real calls. The video remains.**
 
 ## Proven on real calls, not just in tests
 
-Two calls connected and did everything the product claims:
+Five calls connected across the day and did everything the product claims:
 
 | Behaviour | Evidence |
 | --- | --- |
@@ -50,25 +50,33 @@ Two calls connected and did everything the product claims:
 | A promise is a promise, not a fact | `will_join = yes` stored as a claim carrying the exact quote, `confirmed: false` |
 | The identity gate holds | A parent answering for the named student produced `identity_confirmed = no`, and nothing was attributed to them |
 | The contact cooldown holds | A second reminder an hour later was refused: "Last contacted 1.0h ago; this action requires 120h between calls" |
+| It refuses and then returns to its own task | Asked for a discount mid-call, it declined and said "Wapas apne sawaal par aate hain", then repeated its question. Asked again about combining two months, it declined again |
+| It reports only what it noted | Closed by summarising the callback request and the two questions it was sending on, and nothing else |
+
+Free workflow and contact pairs, as of the last session: everything except
+`fee-reminder` and `fee-followup` on R. Sharma, and `fee-followup`,
+`demo-class-followup` and `staff-absence-reason` on S. Verma.
 
 ---
 
 ## Not done
 
-1. **The demo video.** About three minutes. See the plan below.
-2. **The video on the landing page.** One line: `DEMO_VIDEO_ID` in
-   `ui/src/pages/Landing.jsx`. The section already exists and shows a branded
-   placeholder until an id is set.
-3. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
+1. **The submission pull request.** `apps/web/deskhelp/README.md` plus a line
    each in `apps/README.md` and the CALL-E repo's root `README.md`. No code
    goes in it: it is a catalogue pointer to this repository.
-4. **The Devpost form**, and the feedback survey, which is a separate prize.
+2. **The Devpost form**, and the feedback survey, which is a separate prize.
+3. **A shorter cut of the video.** The published one runs 7:29. The rules say
+   it "should be less than three (3) minutes" and that "judges are not required
+   to watch beyond three", and the first real call starts at 2:55. Not a
+   disqualification, but everything that proves the product sits past the mark
+   a judge may stop at.
 
 ---
 
-## The video, as planned
+## The video
 
-Three minutes, in three parts:
+Published: <https://www.youtube.com/watch?v=bN7Rh2KrZKo>, 7:29, and wired into
+the landing page. It was planned as three parts:
 
 1. **About ninety seconds on the product.** What it is, what an institute
    actually does with it, the fourteen workflows, the dry run showing the exact
@@ -85,14 +93,11 @@ Two things to get right in the take:
 - **Confirm identity plainly.** Answer "Kya aap S. Verma hain?" with "haan,
   main S. Verma bol raha hun". Anything less produces `needs-human`, correctly.
 
-Free workflow and contact pairs, as of the last session: `fee-reminder` on
-S. Verma, and everything except `demo-class-followup` on either handset.
-
 ---
 
 ## Standing reminders
 
-- **20 CALL-E calls, 6 spent, 14 left.**
+- **20 CALL-E calls, 11 spent, 9 left.**
 - **CALL-E's shared number pool does not reach India.** The account now owns
   `+1 208-428-4381` as its default outbound number, $2.00/month, identity
   verified. That is what made calling work. Their announcement of 6 and 7 Sept

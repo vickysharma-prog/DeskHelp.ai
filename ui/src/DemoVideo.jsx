@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 
-export function DemoVideo({ id, title = 'DeskHelp in three minutes' }) {
+export function DemoVideo({ id, title = 'DeskHelp: a real call, start to finish' }) {
   const [playing, setPlaying] = useState(false);
 
   // Before the video is published there is nothing to load, so the frame holds
@@ -47,7 +47,7 @@ export function DemoVideo({ id, title = 'DeskHelp in three minutes' }) {
           <path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.7-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2Z" />
         </svg>
       </span>
-      <span className="video-label">Watch it work, in three minutes</span>
+      <span className="video-label">Watch it place a real call</span>
     </button>
   );
 }

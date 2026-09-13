@@ -19,7 +19,7 @@ import { greeting } from '../greeting.js';
  * The YouTube id of the demo. Empty until the video is up, and the section
  * hides itself rather than showing a broken player.
  */
-const DEMO_VIDEO_ID = '';
+const DEMO_VIDEO_ID = 'bN7Rh2KrZKo';
 
 const WORKFLOWS = [
   'Fee reminder',

@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/node-%E2%89%A522.5-111111?style=flat-square" alt="Node 22.5 or later">
-  <img src="https://img.shields.io/badge/tests-171%20passing-111111?style=flat-square" alt="171 tests">
+  <img src="https://img.shields.io/badge/tests-173%20passing-111111?style=flat-square" alt="173 tests">
   <img src="https://img.shields.io/badge/runtime%20deps-0-111111?style=flat-square" alt="No runtime dependencies">
   <img src="https://img.shields.io/badge/calls-dry%20run%20by%20default-111111?style=flat-square" alt="Dry run by default">
 </p>
@@ -30,6 +30,10 @@ It is built for schools, colleges and coaching institutes, and it works in any
 office that runs on the phone. Calls happen through
 [CALL-E](https://www.heycall-e.com/); everything about who to call, when, what
 may be said and what the answer meant is DeskHelp's.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=bN7Rh2KrZKo"><strong>Watch it place a real call &rarr;</strong></a>
+</p>
 
 <p align="center">
   <img src="assets/screens/tour.gif" width="820" alt="A tour: the dashboard, the fourteen workflows, a dry run showing the exact words, and the review queue">
@@ -277,7 +281,7 @@ commit, and everything printed masks it.
 ## Tests
 
 ```bash
-npm run check     # typecheck and 171 tests
+npm run check     # typecheck and 173 tests
 ```
 
 Weighted towards the refusals rather than the happy path: unusable timezones,
